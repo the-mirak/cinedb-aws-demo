@@ -1,0 +1,73 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .add-button, .edit-button, .delete-button, form button {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+  }
+  
+  .add-button {
+    background-color: #28a745;
+  }
+  
+  .edit-button {
+    background-color: #ffc107;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+  }
+  
+  form button {
+    background-color: #007bff;
+  }
+  
+  .movie-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .movie-table th, .movie-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  form input[type="text"],
+  form input[type="number"],
+  form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  form textarea {
+    height: 100px;
+  }
