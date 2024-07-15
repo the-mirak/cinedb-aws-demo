@@ -10,19 +10,19 @@ const movies = [
     title: "Shadow of the Deep",
     synopsis: "In a futuristic society, a scientist discovers a way to manipulate memories, leading to unexpected consequences and a race against time to undo the damage.",
     rating: 7.8,
-    imageUrl: "https://cinedb-bucket-2024.s3.us-west-2.amazonaws.com/ShadowOfTheDeep.png"
+    poster: "https://cinedb-bucket-2024.s3.us-west-2.amazonaws.com/ShadowOfTheDeep.png"
   },
   {
     title: "Celestial Nomads",
     synopsis: "In a distant galaxy, a group of interstellar travelers embarks on a journey to find a new home, facing unknown dangers and forging new alliances along the way.",
     rating: 9.3,
-    imageUrl: "https://cinedb-bucket-2024.s3.us-west-2.amazonaws.com/CelestialNomads.png"
+    poster: "https://cinedb-bucket-2024.s3.us-west-2.amazonaws.com/CelestialNomads.png"
   },
   {
     title: "Quantum Echo",
     synopsis: "In a world where time travel is possible, a detective must solve a series of crimes that echo through different timelines, all while confronting his own past.",
     rating: 8.0,
-    imageUrl: "https://cinedb-bucket-2024.s3.us-west-2.amazonaws.com/QuantumEcho.png"
+    poster: "https://cinedb-bucket-2024.s3.us-west-2.amazonaws.com/QuantumEcho.png"
   }
 ];
 
@@ -34,7 +34,7 @@ async function addMovie(movie) {
       title: movie.title,
       synopsis: movie.synopsis,
       rating: movie.rating,
-      imageUrl: movie.imageUrl,
+      poster: movie.poster,
       createdAt: new Date().toISOString()
     }
   };
