@@ -149,6 +149,10 @@ app.delete('/admin-api/movies/:id', async (req, res) => {
   }
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy' });
+});
+
 app.listen(port, () => {
   console.log(`Admin API server running on port ${port}`);
 });
