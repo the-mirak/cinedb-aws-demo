@@ -18,7 +18,7 @@ const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'healthy' });
 });
 

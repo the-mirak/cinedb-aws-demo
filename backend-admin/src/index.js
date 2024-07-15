@@ -24,6 +24,10 @@ app.use(express.json());
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+app.get('/admin-api/health', (req, res) => {
+  res.status(200).json({ status: 'healthy' });
+});
+
 // Get all movies
 app.get('/admin-api/movies', async (req, res) => {
   try {
@@ -149,9 +153,6 @@ app.delete('/admin-api/movies/:id', async (req, res) => {
   }
 });
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'healthy' });
-});
 
 app.listen(port, () => {
   console.log(`Admin API server running on port ${port}`);
