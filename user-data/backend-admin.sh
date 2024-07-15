@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo yum update -y
 sudo yum install -y nodejs npm git
-git clone https://github.com/the-mirak/cinedb-aws-demo.git
+git clone https://github.com/the-mirak/cinedb-aws-demo.git cinedb
 cd cinedb/backend-admin
 npm install
 echo "PORT=3001" > .env
