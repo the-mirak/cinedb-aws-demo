@@ -3,9 +3,8 @@ import Navbar from './components/Navbar';
 import MovieCard from './components/MovieCard';
 import AWS from 'aws-sdk';
 
-AWS.config.update({
-  region: process.env.REACT_APP_AWS_REGION,
-});
+// Configure AWS SDK to use the IAM role
+AWS.config.update({ region: 'us-west-2' }); // Replace with your actual region if different
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
@@ -23,6 +22,7 @@ const App = () => {
         setMovies(result.Items);
       } catch (error) {
         console.error('Error fetching movies:', error);
+        console.error('Error details:', JSON.stringify(error, null, 2));
       }
     };
 
