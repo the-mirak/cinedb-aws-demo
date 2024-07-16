@@ -1,21 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const AWS = require('aws-sdk');
-const dotenv = require('dotenv');
+import React from 'react';
+   import ReactDOM from 'react-dom';
+   import './styles/index.css';
+   import App from './App';
 
-dotenv.config();
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-AWS.config.update({
-  region: process.env.AWS_REGION
-});
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = process.env.DYNAMODB_TABLE_NAME;
-
-app.use(cors());
-app.use(express.json());
-
-
+   ReactDOM.render(
+     <React.StrictMode>
+       <App />
+     </React.StrictMode>,
+     document.getElementById('root')
+   );
