@@ -21,6 +21,17 @@ npm install
 
 # Set AWS region environment variable
 echo "export AWS_REGION=us-west-2" >> /home/ec2-user/.bash_profile
+source /home/ec2-user/.bash_profile
+
+# Build the React app
+echo "Starting build process..."
+npm run build
+if [ $? -eq 0 ]; then
+    echo "Build completed successfully"
+else
+    echo "Build failed"
+    exit 1
+fi
 
 # Install PM2 globally
 npm install -g pm2
@@ -31,3 +42,8 @@ pm2 start server.js
 # Save the PM2 process list and configure PM2 to start on system startup
 pm2 save
 pm2 startup systemd
+
+# Set correct permissions
+chown -R ec2-user:ec2-user /home/ec2-user/cinedb
+
+echo "Setup completed"

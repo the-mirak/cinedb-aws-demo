@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import MovieCard from './components/MovieCard';
-import { DynamoDB } from 'aws-sdk';
+import AWS from 'aws-sdk';
 
-const dynamodb = new DynamoDB.DocumentClient({
+AWS.config.update({
   region: process.env.REACT_APP_AWS_REGION,
-  // AWS credentials will be provided by the IAM role attached to the EC2 instance
 });
+
+const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const App = () => {
   const [movies, setMovies] = useState([]);
@@ -16,9 +17,9 @@ const App = () => {
       try {
         const params = {
           TableName: 'cinedb',
-          // Add any scan parameters if needed
         };
         const result = await dynamodb.scan(params).promise();
+        console.log('Fetched movies:', result.Items);
         setMovies(result.Items);
       } catch (error) {
         console.error('Error fetching movies:', error);

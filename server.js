@@ -1,8 +1,11 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 80;
+
+app.use(cors());
 
 // Serve static files from the React app build directory
 app.use(express.static(path.join(__dirname, 'build')));
