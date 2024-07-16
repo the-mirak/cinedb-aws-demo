@@ -9,7 +9,7 @@ sudo dnf install -y nginx
 # Clone the repository
 git clone https://github.com/the-mirak/cinedb-aws-demo.git /home/ec2-user/cinedb
 # Navigate to the frontend directory
-cd /home/ec2-user/cinedb/frontend
+cd /home/ec2-user/cinedb/frontend-index
 # Install dependencies
 npm install
 # Set the API URL
