@@ -1,51 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import MovieCard from './components/MovieCard';
-import AWS from 'aws-sdk';
-
-console.log('Initializing AWS configuration...');
-AWS.config.update({ region: 'us-west-2' }); // Replace with your actual region if different
-console.log('AWS SDK Version:', AWS.VERSION);
-console.log('AWS Config:', JSON.stringify(AWS.config, null, 2));
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const App = () => {
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         console.log('Fetching movies...');
-        console.log('DynamoDB client:', dynamodb);
         
-        const params = {
-          TableName: 'cinedb',
-        };
-        console.log('Scan params:', JSON.stringify(params, null, 2));
+        const response = await fetch('/api/movies');
+        const data = await response.json();
         
-        const result = await dynamodb.scan(params).promise();
-        console.log('Scan result:', JSON.stringify(result, null, 2));
-        
-        if (result.Items) {
-          console.log('Fetched movies:', result.Items);
-          setMovies(result.Items);
+        if (response.ok) {
+          setMovies(data);
         } else {
-          console.log('No items returned from scan');
-          setMovies([]);
+          throw new Error(data.error || 'Failed to fetch movies');
         }
       } catch (error) {
         console.error('Error fetching movies:', error);
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchMovies();
   }, []);
+
+  if (loading) {
+    return <div className="text-center mt-10">Loading...</div>;
+  }
 
   if (error) {
     return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
