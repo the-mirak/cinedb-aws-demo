@@ -8,7 +8,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
 
 @main.route('/')
 def index():
-    table = dynamodb.Table('CineDB')
+    table = dynamodb.Table('cinedb')
     response = table.scan()
     movies = response['Items']
 
