@@ -1,49 +1,42 @@
 #!/bin/bash
 
-# Update the system
+# Update the system and install necessary packages
 yum update -y
+yum install -y git nodejs
 
-# Install Node.js
-curl -sL https://rpm.nodesource.com/setup_14.x | bash -
-yum install -y nodejs
+# Clone the repository (replace with your actual repository URL)
+git clone https://github.com/yourusername/cinedb-app.git /home/ec2-user/cinedb-app
 
-# Install Git
-yum install -y git
-
-# Clone your repository (replace with your actual repository URL)
-git clone https://github.com/the-mirak/cinedb-aws-demo.git /home/ec2-user/cinedb
-
-# Navigate to the app directory
-cd /home/ec2-user/cinedb
+# Change directory to the application folder
+cd /home/ec2-user/cinedb-app
 
 # Install dependencies
 npm install
 
-# Set AWS region environment variable
-echo "export AWS_REGION=us-west-2" >> /home/ec2-user/.bash_profile
-source /home/ec2-user/.bash_profile
-
-# Build the React app
-echo "Starting build process..."
+# Build the application
 npm run build
-if [ $? -eq 0 ]; then
-    echo "Build completed successfully"
-else
-    echo "Build failed"
-    exit 1
-fi
 
-# Install PM2 globally
-npm install -g pm2
+# Install serve to serve the build files
+npm install -g serve
 
-# Start the application with PM2
-pm2 start server.js
+# Create a systemd service to run the application
+cat <<EOF > /etc/systemd/system/cinedb-app.service
+[Unit]
+Description=CineDB React Application
+After=network.target
 
-# Save the PM2 process list and configure PM2 to start on system startup
-pm2 save
-pm2 startup systemd
+[Service]
+Type=simple
+User=ec2-user
+WorkingDirectory=/home/ec2-user/cinedb-app
+ExecStart=/usr/bin/serve -s build -l 80
+Restart=always
 
-# Set correct permissions
-chown -R ec2-user:ec2-user /home/ec2-user/cinedb
+[Install]
+WantedBy=multi-user.target
+EOF
 
-echo "Setup completed"
+# Reload systemd, enable and start the service
+systemctl daemon-reload
+systemctl enable cinedb-app.service
+systemctl start cinedb-app.service
