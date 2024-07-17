@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineDB</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Welcome to CineDB</h1>
+    </div>
+    <div class="movie-list">
+        {% for movie in movies %}
+        <div class="movie-card">
+            <img src="{{ movie.poster }}" alt="{{ movie.title }} poster">
+            <h2>{{ movie.title }}</h2>
+            <p><strong>Rating:</strong> {{ movie.rating }}</p>
+            <p>{{ movie.synopsis }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
