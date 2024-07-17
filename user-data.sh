@@ -5,8 +5,7 @@ yum update -y
 yum install -y git nodejs
 
 # Clone the repository (replace with your actual repository URL)
-git clone https://github.com/yourusername/cinedb-app.git /home/ec2-user/cinedb-app
-
+git clone https://github.com/the-mirak/cinedb-aws-demo.git /home/ec2-user/cinedb
 # Change directory to the application folder
 cd /home/ec2-user/cinedb-app
 
