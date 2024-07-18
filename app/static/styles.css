@@ -111,14 +111,18 @@ main {
     border-color: #ebccd1;
 }
 
-form {
+form.movie-form {
     background-color: #fff;
-    /*padding: 2rem;*/
+    padding: 2rem;
     border-radius: 8px;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;*/
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
     max-width: 500px;
     margin: 2rem auto;
+}
+
+form.delete-form {
+    margin: 0;
 }
 
 .form-group {
@@ -200,7 +204,6 @@ button:hover {
 }
 
 .details-container .details-poster-img {
-    /*width: 100%;*/
     height: auto;
 }
 
@@ -224,7 +227,7 @@ button:hover {
 
 .details .buttons {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     width: 100%;
     margin-top: 20px;
 }
@@ -240,6 +243,7 @@ button:hover {
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    margin: 0 10px;
 }
 
 .details .edit {
