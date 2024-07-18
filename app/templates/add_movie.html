@@ -11,61 +11,22 @@
     <header>
         <h1>Add a Movie</h1>
         <nav>
-            <a href="{{ url_for('main.index') }}">Home</a><!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Add Movie</title>
-                <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-                <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-            </head>
-            <body>
-                <header>
-                    <h1>Add a Movie</h1>
-                    <nav>
-                        <a href="{{ url_for('main.index') }}">Home</a>
-                    </nav>
-                </header>
-                <main>
-                    <!-- Flash Messages -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            <div class="flash-messages">
-                                {% for category, message in messages %}
-                                    <div class="alert alert-{{ category }}">{{ message }}</div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    {% endwith %}
-            
-                    <!-- Add Movie Form -->
-                    <form action="{{ url_for('main.add_movie') }}" method="POST" enctype="multipart/form-data">
-                        <div class="form-group">
-                            <label for="title">Title</label>
-                            <input type="text" id="title" name="title" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="rating">Rating</label>
-                            <input type="text" id="rating" name="rating" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="synopsis">Synopsis</label>
-                            <textarea id="synopsis" name="synopsis" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="poster">Poster Image</label>
-                            <input type="file" id="poster" name="poster" required>
-                        </div>
-                        <button type="submit">Add Movie</button>
-                    </form>
-                </main>
-            </body>
-            </html>
-            
+            <a href="{{ url_for('main.index') }}">Home</a>
         </nav>
     </header>
     <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Add Movie Form -->
         <form action="{{ url_for('main.add_movie') }}" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="title">Title</label>
