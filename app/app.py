@@ -1,6 +1,9 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 import boto3
 import re
+import uuid
+import json
+import os
 
 main = Blueprint('main', __name__)
 
@@ -39,3 +42,54 @@ def index():
         movies = []
 
     return render_template('index.html', movies=movies)
+
+@main.route('/add', methods=['GET', 'POST'])
+def add_movie():
+    table = dynamodb.Table('cinedb')
+    if request.method == 'POST':
+        movie_id = str(uuid.uuid4())
+        title = request.form['title']
+        rating = request.form['rating']
+        synopsis = request.form['synopsis']
+        
+        # Handle file upload
+        if 'poster' not in request.files:
+            flash('No file part', 'danger')
+            return redirect(request.url)
+        
+        file = request.files['poster']
+        
+        if file.filename == '':
+            flash('No selected file', 'danger')
+            return redirect(request.url)
+        
+        if file:
+            filename = f"{movie_id}_{file.filename}"
+            file_path = os.path.join('/tmp', filename)
+            file.save(file_path)
+            
+            # Upload to S3
+            try:
+                s3_client.upload_file(file_path, S3_BUCKET, filename)
+                poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION', 'us-west-2')}.amazonaws.com/{filename}"
+            except Exception as e:
+                flash(f"An error occurred while uploading to S3: {e}", 'danger')
+                return redirect(request.url)
+        
+        # Add movie to DynamoDB
+        try:
+            table.put_item(
+                Item={
+                    'id': movie_id,
+                    'title': title,
+                    'rating': rating,
+                    'synopsis': synopsis,
+                    'poster': poster_url
+                }
+            )
+            flash('Movie added successfully!', 'success')
+            return redirect(url_for('main.index'))
+        except Exception as e:
+            flash(f"An error occurred: {e}", 'danger')
+    
+    return render_template('add_movie.html')

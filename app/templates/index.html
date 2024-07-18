@@ -3,22 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineDB</title>
+    <title>Movie Posters</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="header">
-        <h1>Welcome to CineDB</h1>
-    </div>
-    <div class="movie-list">
-        {% for movie in movies %}
-        <div class="movie-card">
-            <img src="{{ movie.poster }}" alt="{{ movie.title }} poster">
-            <h2>{{ movie.title }}</h2>
-            <p><strong>Rating:</strong> {{ movie.rating }}</p>
-            <p>{{ movie.synopsis }}</p>
+    <header>
+        <h1>Your CineDB</h1>
+        <nav>
+            <a href="{{ url_for('main.add_movie') }}">Add a Movie</a>
+        </nav>
+    </header>
+    <main>
+        <div class="movies-container">
+            <div class="movies-grid">
+                {% for movie in movies %}
+                <div class="movie-card poster" data-title="{{ movie.title }}" data-rating="{{ movie.rating }}" data-synopsis="{{ movie.synopsis }}" data-poster="{{ movie.poster }}">
+                    <img src="{{ movie.poster }}" alt="{{ movie.title }}" class="movie-poster">
+                    <div class="movie-info">
+                        <h2 class="movie-title">{{ movie.title }}</h2>
+                        <p class="movie-rating">{{ movie.rating }}</p>
+                        <p class="movie-synopsis">{{ movie.synopsis }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-        {% endfor %}
-    </div>
+        <div class="details-container">
+            <div class="details-poster">
+                <img src="" alt="Poster Image" class="details-poster-img">
+            </div>
+            <div class="details">
+                <h2 class="title"></h2>
+                <p class="rating"></p>
+                <p class="synopsis"></p>
+                <button class="close">Close</button>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const posters = document.querySelectorAll('.poster');
+            const detailsContainer = document.querySelector('.details-container');
+            const posterImg = document.querySelector('.details-container .details-poster-img');
+            const titleElem = document.querySelector('.details .title');
+            const ratingElem = document.querySelector('.details .rating');
+            const synopsisElem = document.querySelector('.details .synopsis');
+            const closeBtn = document.querySelector('.details .close');
+
+            posters.forEach(poster => {
+                poster.addEventListener('click', () => {
+                    console.log('Poster clicked:', poster);
+                    posters.forEach(p => p.classList.add('hidden'));
+                    detailsContainer.classList.add('active');
+                    const posterSrc = poster.dataset.poster;
+                    console.log('Poster source:', posterSrc);
+                    posterImg.src = posterSrc;
+                    posterImg.classList.remove('hidden');
+                    console.log('Image src attribute set to:', posterImg.src);
+                    titleElem.textContent = `Title: ${poster.dataset.title}`;
+                    ratingElem.textContent = `Rating: ${poster.dataset.rating}`;
+                    synopsisElem.textContent = `Synopsis: ${poster.dataset.synopsis}`;
+                });
+            });
+
+            closeBtn.addEventListener('click', () => {
+                posters.forEach(p => p.classList.remove('hidden'));
+                detailsContainer.classList.remove('active');
+            });
+        });
+    </script>
 </body>
 </html>

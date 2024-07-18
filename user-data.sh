@@ -60,8 +60,3 @@ systemctl enable cinedb-app.service
 systemctl start cinedb-app.service
 
 
-# Open port 80 in the firewall (if using firewalld)
-if command -v firewall-cmd > /dev/null; then
-  firewall-cmd --permanent --add-port=80/tcp
-  firewall-cmd --reload
-fi
