@@ -245,5 +245,25 @@ footer {
     padding: 1rem 0;
     background-color: #333;
     color: #fff;
-    margin-top: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+}
+
+th, td {
+    padding: 1rem;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+button {
+    margin: 0 0.5rem;
 }

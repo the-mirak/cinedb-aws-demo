@@ -11,7 +11,7 @@
     <header>
         <h1>CineDB</h1>
         <nav>
-            <a href="{{ url_for('main.add_movie') }}">Add a Movie</a>
+            <a href="{{ url_for('main.admin') }}">Admin</a> <!-- Link to the admin page -->
         </nav>
     </header>
     <main>
@@ -26,6 +26,7 @@
             {% endif %}
         {% endwith %}
 
+        <!-- Display Movie Posters -->
         <div class="movies-container">
             <div class="movies-grid">
                 {% for movie in movies %}
@@ -40,6 +41,8 @@
                 {% endfor %}
             </div>
         </div>
+
+        <!-- Interactive Poster Details -->
         <div class="details-container">
             <div class="details-poster">
                 <img src="" alt="Poster Image" class="details-poster-img">
