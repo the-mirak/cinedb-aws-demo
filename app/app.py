@@ -4,6 +4,7 @@ import re
 import uuid
 import json
 import os
+import requests
 
 main = Blueprint('main', __name__)
 
@@ -16,6 +17,12 @@ S3_BUCKET = 'cinedb-bucket-2024'
 
 # Regular expression to parse the key from the full URL
 url_pattern = re.compile(r'https://[^/]+/([^?]+)')
+
+def get_instance_metadata():
+    metadata_url = 'http://169.254.169.254/latest/meta-data/'
+    instance_id = requests.get(metadata_url + 'instance-id').text
+    availability_zone = requests.get(metadata_url + 'placement/availability-zone').text
+    return instance_id, availability_zone
 
 @main.route('/')
 def index():
@@ -41,7 +48,9 @@ def index():
         print(f"An error occurred: {e}")
         movies = []
 
-    return render_template('index.html', movies=movies)
+    instance_id, availability_zone = get_instance_metadata()
+
+    return render_template('index.html', movies=movies, instance_id=instance_id, availability_zone=availability_zone)
 
 @main.route('/add', methods=['GET', 'POST'])
 def add_movie():

@@ -11,7 +11,7 @@
     <header>
         <h1>Your CineDB</h1>
         <nav>
-            <a href="{{ url_for('main.add_movie') }}">Add a Movie</a>
+            <a href="{{ url_for('add_movie') }}">Add a Movie</a>
         </nav>
     </header>
     <main>
@@ -41,6 +41,10 @@
             </div>
         </div>
     </main>
+    <footer>
+        <p>&copy; 2024 (c) MirakTech. All rights reserved.</p>
+        <p>Instance ID: {{ instance_id }} | Availability Zone: {{ availability_zone }}</p>
+    </footer>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const posters = document.querySelectorAll('.poster');
@@ -53,14 +57,10 @@
 
             posters.forEach(poster => {
                 poster.addEventListener('click', () => {
-                    console.log('Poster clicked:', poster);
                     posters.forEach(p => p.classList.add('hidden'));
                     detailsContainer.classList.add('active');
                     const posterSrc = poster.dataset.poster;
-                    console.log('Poster source:', posterSrc);
                     posterImg.src = posterSrc;
-                    posterImg.classList.remove('hidden');
-                    console.log('Image src attribute set to:', posterImg.src);
                     titleElem.textContent = `Title: ${poster.dataset.title}`;
                     ratingElem.textContent = `Rating: ${poster.dataset.rating}`;
                     synopsisElem.textContent = `Synopsis: ${poster.dataset.synopsis}`;

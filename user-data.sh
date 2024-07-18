@@ -2,11 +2,13 @@
 
 # Update the system and install necessary packages
 yum update -y
+sleep 10
 yum install -y git python3 python3-pip
 
 # Clone the repository
 REPO_URL="https://github.com/the-mirak/cinedb-aws-demo.git"
 TARGET_DIR="/home/ec2-user/cinedb"
+sleep 5
 git clone $REPO_URL $TARGET_DIR
 
 # Check if the clone was successful
