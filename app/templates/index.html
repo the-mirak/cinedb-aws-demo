@@ -9,9 +9,9 @@
 </head>
 <body>
     <header>
-        <h1>Your CineDB</h1>
+        <h1>CineDB</h1>
         <nav>
-            <a href="{{ url_for('add_movie') }}">Add a Movie</a>
+            <a href="{{ url_for('main.add_movie') }}">Add a Movie</a>
         </nav>
     </header>
     <main>
@@ -42,7 +42,7 @@
         </div>
     </main>
     <footer>
-        <p>&copy; 2024 (c) MirakTech. All rights reserved.</p>
+        <p>&copy; 2024 Mirak Tech (c). All rights reserved.</p>
         <p>Instance ID: {{ instance_id }} | Availability Zone: {{ availability_zone }}</p>
     </footer>
     <script>
