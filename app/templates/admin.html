@@ -16,6 +16,18 @@
         </nav>
     </header>
     <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Display Movie Posters for Admin -->
         <div class="movies-container">
             <div class="movies-grid">
                 {% for movie in movies %}
@@ -30,6 +42,8 @@
                 {% endfor %}
             </div>
         </div>
+
+        <!-- Interactive Poster Details for Admin -->
         <div class="details-container">
             <div class="details-poster">
                 <img src="" alt="Poster Image" class="details-poster-img">
@@ -38,9 +52,13 @@
                 <h2 class="title"></h2>
                 <p class="rating"></p>
                 <p class="synopsis"></p>
-                <button class="close">Close</button>
-                <button class="btn btn-edit">Edit</button>
-                <button class="btn btn-delete">Delete</button>
+                <div class="buttons">
+                    <form action="{{ url_for('main.delete_movie', movie_id='') }}" method="POST" class="delete-form">
+                        <button type="submit" class="delete">Delete</button>
+                    </form>
+                    <button class="edit">Edit</button>
+                    <button class="close">Close</button>
+                </div>
             </div>
         </div>
     </main>
@@ -57,43 +75,28 @@
             const ratingElem = document.querySelector('.details .rating');
             const synopsisElem = document.querySelector('.details .synopsis');
             const closeBtn = document.querySelector('.details .close');
-            const editBtn = document.querySelector('.btn-edit');
-            const deleteBtn = document.querySelector('.btn-delete');
+            const editBtn = document.querySelector('.details .edit');
+            const deleteForm = document.querySelector('.delete-form');
+            const deleteBtn = document.querySelector('.details .delete');
 
             posters.forEach(poster => {
                 poster.addEventListener('click', () => {
                     posters.forEach(p => p.classList.add('hidden'));
                     detailsContainer.classList.add('active');
                     const posterSrc = poster.dataset.poster;
+                    const movieId = poster.dataset.id;
                     posterImg.src = posterSrc;
                     titleElem.textContent = `Title: ${poster.dataset.title}`;
                     ratingElem.textContent = `Rating: ${poster.dataset.rating}`;
                     synopsisElem.textContent = `Synopsis: ${poster.dataset.synopsis}`;
-                    editBtn.dataset.id = poster.dataset.id;
-                    deleteBtn.dataset.id = poster.dataset.id;
+                    deleteForm.action = `/delete/${movieId}`;
+                    editBtn.onclick = () => window.location.href = `/edit/${movieId}`;
                 });
             });
 
             closeBtn.addEventListener('click', () => {
                 posters.forEach(p => p.classList.remove('hidden'));
                 detailsContainer.classList.remove('active');
-            });
-
-            editBtn.addEventListener('click', () => {
-                const movieId = editBtn.dataset.id;
-                window.location.href = `/edit/${movieId}`;
-            });
-
-            deleteBtn.addEventListener('click', () => {
-                const movieId = deleteBtn.dataset.id;
-                fetch(`/delete/${movieId}`, { method: 'DELETE' })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.reload();
-                        } else {
-                            alert('Failed to delete the movie');
-                        }
-                    });
             });
         });
     </script>
