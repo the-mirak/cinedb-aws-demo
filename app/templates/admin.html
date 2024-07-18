@@ -16,49 +16,86 @@
         </nav>
     </header>
     <main>
-        <!-- Flash Messages -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-
-        <!-- List of Movies -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Rating</th>
-                    <th>Synopsis</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="movies-container">
+            <div class="movies-grid">
                 {% for movie in movies %}
-                <tr>
-                    <td>{{ movie.title }}</td>
-                    <td>{{ movie.rating }}</td>
-                    <td>{{ movie.synopsis }}</td>
-                    <td>
-                        <form action="{{ url_for('main.delete_movie', movie_id=movie.id) }}" method="POST" style="display:inline;">
-                            <button type="submit">Delete</button>
-                        </form>
-                        <a href="{{ url_for('main.edit_movie', movie_id=movie.id) }}" style="display:inline;">
-                            <button>Edit</button>
-                        </a>
-                    </td>
-                </tr>
+                <div class="movie-card poster" data-id="{{ movie.id }}" data-title="{{ movie.title }}" data-rating="{{ movie.rating }}" data-synopsis="{{ movie.synopsis }}" data-poster="{{ movie.poster }}">
+                    <img src="{{ movie.poster }}" alt="{{ movie.title }}" class="movie-poster">
+                    <div class="movie-info">
+                        <h2 class="movie-title">{{ movie.title }}</h2>
+                        <p class="movie-rating">{{ movie.rating }}</p>
+                        <p class="movie-synopsis">{{ movie.synopsis }}</p>
+                    </div>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        </div>
+        <div class="details-container">
+            <div class="details-poster">
+                <img src="" alt="Poster Image" class="details-poster-img">
+            </div>
+            <div class="details">
+                <h2 class="title"></h2>
+                <p class="rating"></p>
+                <p class="synopsis"></p>
+                <button class="close">Close</button>
+                <button class="btn btn-edit">Edit</button>
+                <button class="btn btn-delete">Delete</button>
+            </div>
+        </div>
     </main>
     <footer>
         <p>&copy; 2024 Mirak Tech (c). All rights reserved.</p>
         <p>Instance ID: {{ instance_id }} | Availability Zone: {{ availability_zone }}</p>
     </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const posters = document.querySelectorAll('.poster');
+            const detailsContainer = document.querySelector('.details-container');
+            const posterImg = document.querySelector('.details-container .details-poster-img');
+            const titleElem = document.querySelector('.details .title');
+            const ratingElem = document.querySelector('.details .rating');
+            const synopsisElem = document.querySelector('.details .synopsis');
+            const closeBtn = document.querySelector('.details .close');
+            const editBtn = document.querySelector('.btn-edit');
+            const deleteBtn = document.querySelector('.btn-delete');
+
+            posters.forEach(poster => {
+                poster.addEventListener('click', () => {
+                    posters.forEach(p => p.classList.add('hidden'));
+                    detailsContainer.classList.add('active');
+                    const posterSrc = poster.dataset.poster;
+                    posterImg.src = posterSrc;
+                    titleElem.textContent = `Title: ${poster.dataset.title}`;
+                    ratingElem.textContent = `Rating: ${poster.dataset.rating}`;
+                    synopsisElem.textContent = `Synopsis: ${poster.dataset.synopsis}`;
+                    editBtn.dataset.id = poster.dataset.id;
+                    deleteBtn.dataset.id = poster.dataset.id;
+                });
+            });
+
+            closeBtn.addEventListener('click', () => {
+                posters.forEach(p => p.classList.remove('hidden'));
+                detailsContainer.classList.remove('active');
+            });
+
+            editBtn.addEventListener('click', () => {
+                const movieId = editBtn.dataset.id;
+                window.location.href = `/edit/${movieId}`;
+            });
+
+            deleteBtn.addEventListener('click', () => {
+                const movieId = deleteBtn.dataset.id;
+                fetch(`/delete/${movieId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('Failed to delete the movie');
+                        }
+                    });
+            });
+        });
+    </script>
 </body>
 </html>

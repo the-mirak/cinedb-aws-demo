@@ -1,3 +1,4 @@
+<!-- templates/edit_movie.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +12,7 @@
     <header>
         <h1>Edit Movie</h1>
         <nav>
-            <a href="{{ url_for('main.index') }}">Home</a>
-            <a href="{{ url_for('main.admin') }}">Admin</a>
+            <a href="{{ url_for('main.admin') }}">Admin Dashboard</a>
         </nav>
     </header>
     <main>
@@ -26,7 +26,6 @@
                 </div>
             {% endif %}
         {% endwith %}
-
         <!-- Edit Movie Form -->
         <form action="{{ url_for('main.edit_movie', movie_id=movie.id) }}" method="POST" enctype="multipart/form-data">
             <div class="form-group">
@@ -43,14 +42,10 @@
             </div>
             <div class="form-group">
                 <label for="poster">Poster Image</label>
-                <input type="file" id="poster" name="poster" required>
+                <input type="file" id="poster" name="poster">
             </div>
-            <button type="submit">Update Movie</button>
+            <button type="submit">Save Changes</button>
         </form>
     </main>
-    <footer>
-        <p>&copy; 2024 Mirak Tech (c). All rights reserved.</p>
-        <p>Instance ID: {{ instance_id }} | Availability Zone: {{ availability_zone }}</p>
-    </footer>
 </body>
 </html>
