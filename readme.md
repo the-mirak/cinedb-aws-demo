@@ -46,6 +46,10 @@ FLASK_SECRET_NAME=flask_ddb_sk
 To launch this application on an EC2 instance, use the following [user-data](./user-data.sh) script.
 
 
+### 6. Populating the database
+To populate the DynamoDB table, you can launch this [lambda function](./Lambda/MovieGen.zip). Make sure to configure the proper permissions and the `DYNAMODB_TABLE_NAME` environment variable.
+
+
 ## Conclusion
 Follow these steps to set up the CineDB project. Ensure all AWS resources are properly created and configured, and environment variables are set correctly in the .env file.
 
