@@ -13,14 +13,14 @@ app = Flask(__name__)
 app.secret_key = get_secret()  # Fetch the secret key from AWS Secrets Manager
 main = Blueprint('main', __name__)
 
-# Initialize the DynamoDB and S3 clients
-dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
-s3_client = boto3.client('s3')
-
-# Your S3 bucket name and DynamoDB table name
+# Load environment variables
 S3_BUCKET = os.getenv('S3_BUCKET')
 DYNAMODB_TABLE = os.getenv('DYNAMODB_TABLE')
 AWS_REGION = os.getenv('AWS_REGION')
+
+# Initialize the DynamoDB and S3 clients with environment variable for region
+dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+s3_client = boto3.client('s3', region_name=AWS_REGION)
 
 # Regular expression to parse the key from the full URL
 url_pattern = re.compile(r'https://[^/]+/([^?]+)')
@@ -89,7 +89,7 @@ def edit_movie(movie_id):
                 file.save(file_path)
                 try:
                     s3_client.upload_file(file_path, S3_BUCKET, filename)
-                    poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION', 'us-west-2')}.amazonaws.com/{filename}"
+                    poster_url = f"https://{S3_BUCKET}.s3.{AWS_REGION}.amazonaws.com/{filename}"
                 except Exception as e:
                     flash(f"An error occurred while uploading to S3: {e}", 'danger')
                     return redirect(request.url)
@@ -153,7 +153,7 @@ def add_movie():
             # Upload to S3
             try:
                 s3_client.upload_file(file_path, S3_BUCKET, filename)
-                poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION', 'us-west-2')}.amazonaws.com/{filename}"
+                poster_url = f"https://{S3_BUCKET}.s3.{AWS_REGION}.amazonaws.com/{filename}"
             except Exception as e:
                 flash(f"An error occurred while uploading to S3: {e}", 'danger')
                 return redirect(request.url)
@@ -190,7 +190,6 @@ def delete_movie(movie_id):
 @main.route('/healthz', methods=['GET'])
 def health_check():
     return jsonify(status='healthy'), 200
-
 
 # Register the blueprint
 app.register_blueprint(main)
