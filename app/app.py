@@ -6,21 +6,19 @@ import json
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for session management in Flask
+app.secret_key = os.getenv('FLASK_SECRET_KEY')  # Use the secret key from .env
 main = Blueprint('main', __name__)
 
 # Initialize the DynamoDB and S3 clients
-dynamodb = boto3.resource('dynamodb', region_name='us-west-2')
+dynamodb = boto3.resource('dynamodb', region_name=os.getenv('AWS_REGION'))
 s3_client = boto3.client('s3')
 
 # Your S3 bucket name
 S3_BUCKET = os.getenv('S3_BUCKET')
 DYNAMODB_TABLE = os.getenv('DYNAMODB_TABLE')
-AWS_REGION = os.getenv('AWS_REGION')
 
 # Regular expression to parse the key from the full URL
 url_pattern = re.compile(r'https://[^/]+/([^?]+)')
@@ -38,7 +36,7 @@ def generate_presigned_url(movie):
 
 @main.route('/')
 def index():
-    table = dynamodb.Table('DYNAMODB_TABLE')
+    table = dynamodb.Table(DYNAMODB_TABLE)
     try:
         response = table.scan()
         movies = response.get('Items', [])
@@ -56,7 +54,7 @@ def index():
 
 @main.route('/admin')
 def admin_dashboard():
-    table = dynamodb.Table('DYNAMODB_TABLE')
+    table = dynamodb.Table(DYNAMODB_TABLE)
     try:
         response = table.scan()
         movies = response.get('Items', [])
@@ -74,7 +72,7 @@ def admin_dashboard():
 
 @main.route('/edit/<movie_id>', methods=['GET', 'POST'])
 def edit_movie(movie_id):
-    table = dynamodb.Table('DYNAMODB_TABLE')
+    table = dynamodb.Table(DYNAMODB_TABLE)
     if request.method == 'POST':
         title = request.form['title']
         rating = request.form['rating']
@@ -89,7 +87,7 @@ def edit_movie(movie_id):
                 file.save(file_path)
                 try:
                     s3_client.upload_file(file_path, S3_BUCKET, filename)
-                    poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION', 'us-west-2')}.amazonaws.com/{filename}"
+                    poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{filename}"
                 except Exception as e:
                     flash(f"An error occurred while uploading to S3: {e}", 'danger')
                     return redirect(request.url)
@@ -127,7 +125,7 @@ def edit_movie(movie_id):
 
 @main.route('/add', methods=['GET', 'POST'])
 def add_movie():
-    table = dynamodb.Table('DYNAMODB_TABLE')
+    table = dynamodb.Table(DYNAMODB_TABLE)
     if request.method == 'POST':
         movie_id = str(uuid.uuid4())
         title = request.form['title']
@@ -153,7 +151,7 @@ def add_movie():
             # Upload to S3
             try:
                 s3_client.upload_file(file_path, S3_BUCKET, filename)
-                poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION', 'us-west-2')}.amazonaws.com/{filename}"
+                poster_url = f"https://{S3_BUCKET}.s3.{os.getenv('AWS_REGION')}.amazonaws.com/{filename}"
             except Exception as e:
                 flash(f"An error occurred while uploading to S3: {e}", 'danger')
                 return redirect(request.url)
@@ -178,7 +176,7 @@ def add_movie():
 
 @main.route('/delete/<movie_id>', methods=['POST'])
 def delete_movie(movie_id):
-    table = dynamodb.Table('DYNAMODB_TABLE')
+    table = dynamodb.Table(DYNAMODB_TABLE)
     try:
         table.delete_item(Key={'id': movie_id})
         flash('Movie deleted successfully!', 'success')
