@@ -186,7 +186,7 @@ def delete_movie(movie_id):
     return redirect(url_for('main.admin_dashboard'))
 
 # Health check endpoint
-@main.route('/health', methods=['GET'])
+@main.route('/healthz', methods=['GET'])
 def health_check():
     return jsonify(status='healthy'), 200
 
