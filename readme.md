@@ -47,7 +47,8 @@ To launch this application on an EC2 instance, use the following [user-data](./u
 
 
 ### 6. Populating the database
-To populate the DynamoDB table, you can launch this [lambda function](./Lambda/MovieGen.zip). Make sure to configure the proper permissions and the `DYNAMODB_TABLE_NAME` environment variable.
+To populate the DynamoDB table, you can launch this [lambda function](./lambda/MovieGen.zip). Make sure to configure the proper permissions and the `DYNAMODB_TABLE_NAME` environment variable.
+Make sure to upload the [pictures](./lambda/Pictures/) to your s3 bucket. 
 
 
 ## Conclusion
