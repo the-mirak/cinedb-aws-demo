@@ -1,11 +1,10 @@
-from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash
+from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash, jsonify
 import boto3
 import re
 import uuid
 import json
 import os
 from dotenv import load_dotenv
-from . import get_secret  # Import the get_secret function
 
 load_dotenv()
 
@@ -185,6 +184,11 @@ def delete_movie(movie_id):
     except Exception as e:
         flash(f"An error occurred: {e}", 'danger')
     return redirect(url_for('main.admin_dashboard'))
+
+# Health check endpoint
+@main.route('/health', methods=['GET'])
+def health_check():
+    return jsonify(status='healthy'), 200
 
 # Register the blueprint
 app.register_blueprint(main)
