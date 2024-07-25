@@ -1,10 +1,11 @@
-from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash
 import boto3
 import re
 import uuid
 import json
 import os
 from dotenv import load_dotenv
+from . import get_secret  # Import the get_secret function
 
 load_dotenv()
 
