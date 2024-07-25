@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash
+from flask import Flask, Blueprint, render_template, request, redirect, url_for, flash, jsonify
 import boto3
 import re
 import uuid
@@ -190,6 +190,7 @@ def delete_movie(movie_id):
 @main.route('/healthz', methods=['GET'])
 def health_check():
     return jsonify(status='healthy'), 200
+
 
 # Register the blueprint
 app.register_blueprint(main)
