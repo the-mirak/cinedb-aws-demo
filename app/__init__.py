@@ -31,8 +31,10 @@ def get_secret():
 def create_app():
     app = Flask(__name__, template_folder='templates', static_folder='static')
 
-    # Load configuration from environment variables
-    app.config['SECRET_KEY'] = get_secret()  # Fetch the secret key from AWS Secrets Manager
+    # Fetch the secret key from AWS Secrets Manager
+    app.config['SECRET_KEY'] = get_secret()
+
+    # Load other configuration from environment variables
     app.config['S3_BUCKET'] = os.getenv('S3_BUCKET')
     app.config['DYNAMODB_TABLE'] = os.getenv('DYNAMODB_TABLE')
 
