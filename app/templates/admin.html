@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movie DB</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>CineDB</h1>
+        <h1>Admin Dashboard</h1>
         <nav>
-            <!-- Link to the admin page -->
-            <a href="{{ url_for('main.admin_dashboard') }}">Admin</a> 
+            <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="{{ url_for('main.add_movie') }}">Add Movie</a>
         </nav>
     </header>
     <main>
@@ -27,11 +27,11 @@
             {% endif %}
         {% endwith %}
 
-        <!-- Display Movie Posters -->
+        <!-- Display Movie Posters for Admin -->
         <div class="movies-container">
             <div class="movies-grid">
                 {% for movie in movies %}
-                <div class="movie-card poster" data-title="{{ movie.title }}" data-rating="{{ movie.rating }}" data-synopsis="{{ movie.synopsis }}" data-poster="{{ movie.poster }}">
+                <div class="movie-card poster" data-id="{{ movie.id }}" data-title="{{ movie.title }}" data-rating="{{ movie.rating }}" data-synopsis="{{ movie.synopsis }}" data-poster="{{ movie.poster }}">
                     <img src="{{ movie.poster }}" alt="{{ movie.title }}" class="movie-poster">
                     <div class="movie-info">
                         <h2 class="movie-title">{{ movie.title }}</h2>
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <!-- Interactive Poster Details -->
+        <!-- Interactive Poster Details for Admin -->
         <div class="details-container">
             <div class="details-poster">
                 <img src="" alt="Poster Image" class="details-poster-img">
@@ -52,12 +52,18 @@
                 <h2 class="title"></h2>
                 <p class="rating"></p>
                 <p class="synopsis"></p>
-                <button class="close">Close</button>
+                <div class="buttons">
+                    <form action="{{ url_for('main.delete_movie', movie_id='') }}" method="POST" class="delete-form">
+                        <button type="submit" class="delete">Delete</button>
+                    </form>
+                    <button class="edit">Edit</button>
+                    <button class="close">Close</button>
+                </div>
             </div>
         </div>
     </main>
     <footer>
-        <p>&copy; 2024 Mirak Tech. All rights reserved.</p>
+        <p>&copy; 2024 Mirak Tech (c). All rights reserved.</p>
         <p>Instance ID: {{ instance_id }} | Availability Zone: {{ availability_zone }}</p>
     </footer>
     <script>
@@ -69,16 +75,22 @@
             const ratingElem = document.querySelector('.details .rating');
             const synopsisElem = document.querySelector('.details .synopsis');
             const closeBtn = document.querySelector('.details .close');
+            const editBtn = document.querySelector('.details .edit');
+            const deleteForm = document.querySelector('.delete-form');
+            const deleteBtn = document.querySelector('.details .delete');
 
             posters.forEach(poster => {
                 poster.addEventListener('click', () => {
                     posters.forEach(p => p.classList.add('hidden'));
                     detailsContainer.classList.add('active');
                     const posterSrc = poster.dataset.poster;
+                    const movieId = poster.dataset.id;
                     posterImg.src = posterSrc;
                     titleElem.textContent = `Title: ${poster.dataset.title}`;
                     ratingElem.textContent = `Rating: ${poster.dataset.rating}`;
                     synopsisElem.textContent = `Synopsis: ${poster.dataset.synopsis}`;
+                    deleteForm.action = `/delete/${movieId}`;
+                    editBtn.onclick = () => window.location.href = `/edit/${movieId}`;
                 });
             });
 
