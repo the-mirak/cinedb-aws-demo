@@ -28,9 +28,9 @@ sleep 5
 
 # Create the .env file with the environment variables
 cat <<EOF > app/.env
-S3_BUCKET=cinedb-bucket-2024
-DYNAMODB_TABLE=cinedb
-AWS_REGION=us-west-2
+S3_BUCKET=your-s3-bucket-name
+DYNAMODB_TABLE=your-dynamodb-table-name
+AWS_REGION=your-aws-region
 FLASK_SECRET_NAME=flask_ddb_sk
 INSTANCE_ID=$INSTANCE_ID
 AVAILABILITY_ZONE=$AVAILABILITY_ZONE
