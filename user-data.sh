@@ -20,13 +20,20 @@ fi
 # Change directory to the application folder
 cd $TARGET_DIR
 
+# Create a .env file with necessary environment variables
+INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+AVAILABILITY_ZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
 # Create the .env file with the environment variables
 cat <<EOF > $TARGET_DIR/app/.env
-S3_BUCKET=cinedb-bucket-2024
+S3_BUCKET=your-bucket-name
 DYNAMODB_TABLE=cinedb
 AWS_REGION=us-west-2
 FLASK_SECRET_NAME=flask_ddb_sk
+INSTANCE_ID=$INSTANCE_ID
+AVAILABILITY_ZONE=$AVAILABILITY_ZONE
 EOF
+
 
 # Set correct permissions for the templates directory
 chmod -R 755 app/templates

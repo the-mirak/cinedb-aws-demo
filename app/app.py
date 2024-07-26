@@ -51,8 +51,7 @@ def index():
     except Exception as e:
         print(f"An error occurred: {e}")
         movies = []
-
-    return render_template('index.html', movies=movies)
+    return render_template('index.html', movies=movies, instance_id=INSTANCE_ID, availability_zone=AVAILABILITY_ZONE)
 
 @main.route('/admin')
 def admin_dashboard():
@@ -69,8 +68,8 @@ def admin_dashboard():
     except Exception as e:
         print(f"An error occurred: {e}")
         movies = []
+    return render_template('admin.html', movies=movies, instance_id=INSTANCE_ID, availability_zone=AVAILABILITY_ZONE)
 
-    return render_template('admin.html', movies=movies)
 
 @main.route('/edit/<movie_id>', methods=['GET', 'POST'])
 def edit_movie(movie_id):
@@ -122,8 +121,8 @@ def edit_movie(movie_id):
         except Exception as e:
             flash(f"An error occurred: {e}", 'danger')
             return redirect(url_for('main.admin_dashboard'))
-    
-    return render_template('edit_movie.html', movie=movie)
+
+    return render_template('edit_movie.html', movies=movies, instance_id=INSTANCE_ID, availability_zone=AVAILABILITY_ZONE)
 
 @main.route('/add', methods=['GET', 'POST'])
 def add_movie():
