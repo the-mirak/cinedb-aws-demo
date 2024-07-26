@@ -2,7 +2,7 @@
 
 # Update the system and install necessary packages
 yum update -y
-sleep 10
+sleep 5
 yum install -y git python3 python3-pip
 
 # Clone the repository
@@ -24,6 +24,8 @@ cd $TARGET_DIR
 INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
 AVAILABILITY_ZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
+sleep 5
+
 # Create the .env file with the environment variables
 cat <<EOF > app/.env
 S3_BUCKET=cinedb-bucket-2024
@@ -33,6 +35,10 @@ FLASK_SECRET_NAME=flask_ddb_sk
 INSTANCE_ID=$INSTANCE_ID
 AVAILABILITY_ZONE=$AVAILABILITY_ZONE
 EOF
+
+echo "Environment variables have been written to app/.env"
+echo "Instance ID: $INSTANCE_ID"
+echo "Availability Zone: $AVAILABILITY_ZONE"
 
 
 # Set correct permissions for the templates directory
