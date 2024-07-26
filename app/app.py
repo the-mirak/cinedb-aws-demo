@@ -135,41 +135,34 @@ def add_movie():
         rating = request.form['rating']
         synopsis = request.form['synopsis']
         
-        # Handle file upload
-        if 'poster' not in request.files:
-            flash('No file part', 'danger')
-            return redirect(request.url)
+        poster_url = None
         
-        file = request.files['poster']
+        if 'poster' in request.files:
+            file = request.files['poster']
+            if file and file.filename != '':
+                filename = f"{movie_id}_{file.filename}"
+                file_path = os.path.join('/tmp', filename)
+                file.save(file_path)
+                
+                try:
+                    s3_client.upload_file(file_path, S3_BUCKET, filename)
+                    poster_url = f"https://{S3_BUCKET}.s3.{AWS_REGION}.amazonaws.com/{filename}"
+                except Exception as e:
+                    flash(f"An error occurred while uploading to S3: {e}", 'danger')
+                    return redirect(request.url)
         
-        if file.filename == '':
-            flash('No selected file', 'danger')
-            return redirect(request.url)
+        item = {
+            'id': movie_id,
+            'title': title,
+            'rating': rating,
+            'synopsis': synopsis
+        }
         
-        if file:
-            filename = f"{movie_id}_{file.filename}"
-            file_path = os.path.join('/tmp', filename)
-            file.save(file_path)
-            
-            # Upload to S3
-            try:
-                s3_client.upload_file(file_path, S3_BUCKET, filename)
-                poster_url = f"https://{S3_BUCKET}.s3.{AWS_REGION}.amazonaws.com/{filename}"
-            except Exception as e:
-                flash(f"An error occurred while uploading to S3: {e}", 'danger')
-                return redirect(request.url)
+        if poster_url:
+            item['poster'] = poster_url
         
-        # Add movie to DynamoDB
         try:
-            table.put_item(
-                Item={
-                    'id': movie_id,
-                    'title': title,
-                    'rating': rating,
-                    'synopsis': synopsis,
-                    'poster': poster_url
-                }
-            )
+            table.put_item(Item=item)
             flash('Movie added successfully!', 'success')
             return redirect(url_for('main.admin_dashboard'))
         except Exception as e:

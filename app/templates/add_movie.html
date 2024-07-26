@@ -12,6 +12,7 @@
         <h1>Add a Movie</h1>
         <nav>
             <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="{{ url_for('main.admin_dashboard') }}">Admin</a>
         </nav>
     </header>
     <main>
@@ -27,7 +28,7 @@
         {% endwith %}
 
         <!-- Add Movie Form -->
-        <form action="{{ url_for('main.add_movie') }}" method="POST" enctype="multipart/form-data"  class="movie-form">
+        <form action="{{ url_for('main.add_movie') }}" method="POST" enctype="multipart/form-data" class="movie-form">
             <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" id="title" name="title" required>
@@ -42,10 +43,16 @@
             </div>
             <div class="form-group">
                 <label for="poster">Poster Image</label>
-                <input type="file" id="poster" name="poster" required>
+                <input type="file" id="poster" name="poster">
             </div>
-            <button type="submit">Add Movie</button>
+            <div class="form-group">
+                <button type="submit">Add Movie</button>
+                <a href="{{ url_for('main.admin_dashboard') }}" class="button">Cancel</a>
+            </div>
         </form>
     </main>
+    <footer>
+        <p>&copy; 2024 Mirak Tech (c). All rights reserved.</p>
+    </footer>
 </body>
 </html>
