@@ -25,8 +25,8 @@ INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
 AVAILABILITY_ZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
 # Create the .env file with the environment variables
-cat <<EOF > $TARGET_DIR/app/.env
-S3_BUCKET=your-bucket-name
+cat <<EOF > app/.env
+S3_BUCKET=cinedb-bucket-2024
 DYNAMODB_TABLE=cinedb
 AWS_REGION=us-west-2
 FLASK_SECRET_NAME=flask_ddb_sk
