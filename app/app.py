@@ -124,7 +124,7 @@ def edit_movie(movie_id):
             flash(f"An error occurred: {e}", 'danger')
             return redirect(url_for('main.admin_dashboard'))
 
-    return render_template('edit_movie.html', movies=movies, instance_id=INSTANCE_ID, availability_zone=AVAILABILITY_ZONE)
+    return render_template('edit_movie.html', movie=movie, instance_id=INSTANCE_ID, availability_zone=AVAILABILITY_ZONE)
 
 @main.route('/add', methods=['GET', 'POST'])
 def add_movie():
