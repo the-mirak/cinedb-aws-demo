@@ -9,7 +9,7 @@ yum install -y git python3 python3-pip
 REPO_URL="https://github.com/the-mirak/cinedb-aws-demo.git"
 TARGET_DIR="/home/ec2-user/cinedb"
 sleep 5
-git clone --branch v2 clone $REPO_URL $TARGET_DIR
+git clone --branch v2 $REPO_URL $TARGET_DIR
 
 # Check if the clone was successful
 if [ ! -d "$TARGET_DIR" ]; then
@@ -19,6 +19,14 @@ fi
 
 # Change directory to the application folder
 cd $TARGET_DIR
+
+# Create the .env file with the environment variables
+cat <<EOF > $TARGET_DIR/app/.env
+S3_BUCKET=cinedb-bucket-2024
+DYNAMODB_TABLE=cinedb
+AWS_REGION=us-west-2
+FLASK_SECRET_NAME=flask_ddb_sk
+EOF
 
 # Set correct permissions for the templates directory
 chmod -R 755 app/templates

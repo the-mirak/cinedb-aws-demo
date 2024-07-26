@@ -13,7 +13,7 @@ Create an S3 bucket to store movie poster images.
 aws s3api create-bucket --bucket your-bucket-name --region us-west-2
 ```
 
-### 2. DynamoDB Table
+#### DynamoDB Table
 Create a DynamoDB table named cinedb.
 
 ```sh
@@ -24,7 +24,7 @@ aws dynamodb create-table \
     --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 ```
 
-### 3. Secrets Manager
+#### Secrets Manager
 Store the Flask secret key in AWS Secrets Manager.
 
 ```sh
@@ -33,20 +33,15 @@ aws secretsmanager create-secret \
     --secret-string '{"SECRET_KEY":"your_secret_key"}'
 ```
 
-### 4. Environment Variables
-Create a .env file in the root of your project directory and add the following variables:
-```
-S3_BUCKET=your-bucket-name
-DYNAMODB_TABLE=cinedb
-AWS_REGION=us-west-2
-FLASK_SECRET_NAME=flask_ddb_sk
-```
+### 2. Automated resource creation
+You can automate the resources creation by running [this Cfn template](./CfnTemplates/prereqCfn.yaml).
 
-### 5. Launching the application
+### 3. Launching the application
 To launch this application on an EC2 instance, use the following [user-data](./user-data.sh) script.
+Make sure to edit the environment variables to reflect the resources you have and the region you are in.
 
 
-### 6. Populating the database
+### 4. Populating the database
 To populate the DynamoDB table, you can launch this [lambda function](./lambda/MovieGen.zip). Make sure to configure the proper permissions and to populate the `S3_BUCKET_NAME` and the `DYNAMODB_TABLE_NAME` environment variable.
 Also, make sure to upload the [pictures](./lambda/Pictures/) to your s3 bucket. 
 
