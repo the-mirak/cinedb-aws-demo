@@ -17,6 +17,8 @@ main = Blueprint('main', __name__)
 S3_BUCKET = os.getenv('S3_BUCKET')
 DYNAMODB_TABLE = os.getenv('DYNAMODB_TABLE')
 AWS_REGION = os.getenv('AWS_REGION')
+INSTANCE_ID = os.getenv('INSTANCE_ID')
+AVAILABILITY_ZONE = os.getenv('AVAILABILITY_ZONE')
 
 # Initialize the DynamoDB and S3 clients with environment variable for region
 dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
