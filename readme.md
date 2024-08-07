@@ -5,6 +5,7 @@ Welcome to the CineDB project! This project is a movie database web application 
 ## Setup Instructions
 
 If you want to **automate some parts of the deployment** you can skip to [here](#2-Automating-resource-creation)
+But if you want a ** full automated deployment** you can skip to [here](#5-Full-App-Deployment)
 
 ### 1. Creating AWS Resources
 
