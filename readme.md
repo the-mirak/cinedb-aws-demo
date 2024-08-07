@@ -4,7 +4,7 @@ Welcome to the CineDB project! This project is a movie database web application 
 
 ## Setup Instructions
 
-If you want to **automate some instruction** you can skip to [here](#2-Automating-resource-creation)
+If you want to **automate some parts of the deployment** you can skip to [here](#2-Automating-resource-creation)
 
 ### 1. Creating AWS Resources
 
@@ -36,7 +36,7 @@ aws secretsmanager create-secret \
 ```
 
 ### 2. Automating resource creation
-If you need to automate the creation of a VPC with its subnets you can use [this Cfn template](./CfnTemplates/prereqCfn.yaml). 
+If you need to automate the creation of a VPC with its subnets you can use [this Cfn template](./CfnTemplates/CfnVPC.yaml). 
 You can also automate the resources creation by running [this Cfn template](./CfnTemplates/prereqCfn.yaml).
 
 ### 3. Launching the application
@@ -48,7 +48,9 @@ Make sure to edit the environment variables to reflect the resources you have an
 To populate the DynamoDB table, you can launch this [lambda function](./lambda/MovieGen.zip). Make sure to configure the proper permissions and to populate the `S3_BUCKET_NAME` and the `DYNAMODB_TABLE_NAME` environment variable.
 Also, make sure to upload the [pictures](./lambda/Pictures/) to your s3 bucket. 
 
-
+### 5. Full App Deployment
+If you want to deploy the CineDB app with less hassle :) just click [here](https://console.aws.amazon.com/cloudformation/home#/stacks/quickcreate?templateURL=https://s3.amazonaws.com/appcomposer-8x8ubbcoecpbev91-ap-northeast-1/template-1723058158951.yaml&stackName=CineDBStack&param_VpcCidrBlock=10.0.0.0/16&param_DynamoDBTableName=cinedb&param_SecretName=flask_ddb_sk&param_InstanceType=t3.micro
+), or you can load the [Cfn template](./CfnTemplates/FullAppCfn.yaml) yourself. 
 
 ## Conclusion
 Follow these steps to set up the CineDB project. Ensure all AWS resources are properly created and configured, and environment variables are set correctly in the .env file.
