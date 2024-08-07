@@ -1,6 +1,6 @@
 # CineDB AWS Demo
 
-Welcome to the [CineDB project](#-Legal-Disclaimer)!
+Welcome to the [CineDB project](#Legal-Disclaimer)!
 
 This project is a movie database web application built with Flask, AWS DynamoDB, and S3.
 
