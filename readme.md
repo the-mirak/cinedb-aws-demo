@@ -57,3 +57,10 @@ If you want to deploy the CineDB app with less hassle :) just click [here](https
 ## Conclusion
 Follow these steps to set up the CineDB project. Ensure all AWS resources are properly created and configured, and environment variables are set correctly in the .env file.
 
+
+## Legal Disclaimer
+
+This code is provided for learning purposes only and should not be used in production environments. The author takes no responsibility for any misuse of the code.
+
+
+
