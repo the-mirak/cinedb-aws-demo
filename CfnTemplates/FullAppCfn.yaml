@@ -400,7 +400,7 @@ Resources:
             echo "Cloning the repository..."
             REPO_URL="https://github.com/the-mirak/cinedb-aws-demo.git"
             TARGET_DIR="/home/ec2-user/cinedb"
-            git clone --branch v2 $REPO_URL $TARGET_DIR
+            git clone $REPO_URL $TARGET_DIR
             if [ ! -d "$TARGET_DIR" ]; then
               echo "Directory $TARGET_DIR does not exist. Git clone might have failed."
               exit 1
