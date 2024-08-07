@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template to create an S3 bucket, DynamoDB table, and a Secrets Manager secret.
+
+Parameters:
+  BucketName:
+    Description: "Name of the S3 bucket for the movie posters"
+    Type: String
+
+
+  DynamoDBTableName:
+    Description: "Name of the movie DynamoDB table"
+    Type: String
+    Default: "cinedb"
+
+  SecretName:
+    Description: "Name of the Secrets Manager secret key for Flask"
+    Type: String
+    Default: "flask_ddb_sk"
+
+Resources:
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      AccessControl: Private
+
+  DynamoDBTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties: 
+      TableName: !Ref DynamoDBTableName
+      AttributeDefinitions: 
+        - AttributeName: "id"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "id"
+          KeyType: "HASH"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+
+  Secret:
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Ref SecretName
+      Description: "Flask secret key for session management"
+      SecretString: !Sub '{"SECRET_KEY":"${AWS::StackName}-secret-key"}'
+
+Outputs:
+  S3BucketName:
+    Description: "Name of the S3 bucket"
+    Value: !Ref S3Bucket
+
+  DynamoDBTableName:
+    Description: "Name of the DynamoDB table"
+    Value: !Ref DynamoDBTable
+
+  SecretName:
+    Description: "Name of the Secrets Manager secret"
+    Value: !Ref Secret

@@ -44,7 +44,10 @@
                 <label for="poster">Poster Image</label>
                 <input type="file" id="poster" name="poster">
             </div>
-            <button type="submit">Update Movie</button>
+            <div class="form-group">
+                <button class="button" type="submit">Add Movie</button>
+                <a href="{{ url_for('main.admin_dashboard') }}" class="button">Cancel</a>
+            </div>
         </form>
     </main>
 </body>

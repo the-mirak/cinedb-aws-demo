@@ -2,14 +2,14 @@
 
 # Update the system and install necessary packages
 yum update -y
-sleep 10
+sleep 5
 yum install -y git python3 python3-pip
 
 # Clone the repository
 REPO_URL="https://github.com/the-mirak/cinedb-aws-demo.git"
 TARGET_DIR="/home/ec2-user/cinedb"
 sleep 5
-git clone --branch v2 clone $REPO_URL $TARGET_DIR
+git clone --branch v2 $REPO_URL $TARGET_DIR
 
 # Check if the clone was successful
 if [ ! -d "$TARGET_DIR" ]; then
@@ -19,6 +19,27 @@ fi
 
 # Change directory to the application folder
 cd $TARGET_DIR
+
+# Create a .env file with necessary environment variables
+INSTANCE_ID=$(curl http://169.254.169.254/latest/meta-data/instance-id)
+AVAILABILITY_ZONE=$(curl http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+sleep 5
+
+# Create the .env file with the environment variables
+cat <<EOF > app/.env
+S3_BUCKET=your-s3-bucket-name
+DYNAMODB_TABLE=your-dynamodb-table-name
+AWS_REGION=your-aws-region
+FLASK_SECRET_NAME=flask_ddb_sk
+INSTANCE_ID=$INSTANCE_ID
+AVAILABILITY_ZONE=$AVAILABILITY_ZONE
+EOF
+
+echo "Environment variables have been written to app/.env"
+echo "Instance ID: $INSTANCE_ID"
+echo "Availability Zone: $AVAILABILITY_ZONE"
+
 
 # Set correct permissions for the templates directory
 chmod -R 755 app/templates
