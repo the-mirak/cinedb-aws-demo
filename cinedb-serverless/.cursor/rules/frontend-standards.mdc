@@ -1,0 +1,66 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Frontend coding standards for HTML, CSS, and JavaScript
+globs: ["frontend/**/*.html", "frontend/**/*.js", "frontend/**/*.css"]
+alwaysApply: true
+---
+
+# Frontend Standards
+
+## JavaScript
+- Use ES6+ features (const, let, arrow functions, async/await)
+- Prefer const and let over var
+- Use async/await for asynchronous operations
+- Implement proper error handling for API calls
+- Use descriptive variable and function names
+- Follow functional programming patterns where possible
+
+## API Integration
+- Use fetch() for HTTP requests
+- Implement proper CORS handling
+- Handle loading states and error responses
+- Use consistent error message display
+- Validate responses before processing
+
+## HTML Structure
+- Use semantic HTML elements
+- Include proper meta tags for responsiveness
+- Use meaningful class names and IDs
+- Ensure accessibility with proper ARIA labels
+- Structure forms with proper validation
+
+## CSS/Tailwind
+- Use Tailwind CSS for all styling
+- Follow mobile-first responsive design
+- Use consistent spacing and color schemes
+- Implement hover and focus states
+- Use CSS Grid and Flexbox for layouts
+
+## File Organization
+- Keep JavaScript in separate files from HTML
+- Use modular code organization
+- Group related functions together
+- Use consistent naming conventions
+- Document complex logic with comments
+
+## Example API Call Pattern
+```javascript
+async function fetchMovies() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/movies`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.movies;
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+        showErrorMessage('Failed to load movies');
+        return [];
+    }
+}
+```

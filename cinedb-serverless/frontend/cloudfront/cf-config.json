@@ -1,0 +1,105 @@
+{
+    "CallerReference": "cinedb-frontend-serverless-distribution",
+    "Comment": "CineDB Frontend Distribution",
+    "DefaultRootObject": "index.html",
+    "Origins": {
+      "Quantity": 1,
+      "Items": [
+        {
+          "Id": "cinedb-s3-origin",
+          "DomainName": "cinedb-frontend-serverless.s3.amazonaws.com",
+          "S3OriginConfig": {
+            "OriginAccessIdentity": "origin-access-identity/cloudfront/E5OEVYK1FLF68"
+          }
+        }
+      ]
+    },
+    "DefaultCacheBehavior": {
+      "TargetOriginId": "cinedb-s3-origin",
+      "ViewerProtocolPolicy": "redirect-to-https",
+      "AllowedMethods": {
+        "Quantity": 2,
+        "Items": ["GET", "HEAD"],
+        "CachedMethods": {
+          "Quantity": 2,
+          "Items": ["GET", "HEAD"]
+        }
+      },
+      "Compress": true,
+      "DefaultTTL": 86400,
+      "MinTTL": 0,
+      "MaxTTL": 31536000,
+      "ForwardedValues": {
+        "QueryString": false,
+        "Cookies": {
+          "Forward": "none"
+        }
+      }
+    },
+    "CacheBehaviors": {
+      "Quantity": 2,
+      "Items": [
+        {
+          "PathPattern": "*.js",
+          "TargetOriginId": "cinedb-s3-origin",
+          "ViewerProtocolPolicy": "redirect-to-https",
+          "AllowedMethods": {
+            "Quantity": 2,
+            "Items": ["GET", "HEAD"],
+            "CachedMethods": {
+              "Quantity": 2,
+              "Items": ["GET", "HEAD"]
+            }
+          },
+          "Compress": true,
+          "DefaultTTL": 604800,
+          "MinTTL": 0,
+          "MaxTTL": 31536000,
+          "ForwardedValues": {
+            "QueryString": false,
+            "Cookies": {
+              "Forward": "none"
+            }
+          }
+        },
+        {
+          "PathPattern": "*.css",
+          "TargetOriginId": "cinedb-s3-origin",
+          "ViewerProtocolPolicy": "redirect-to-https",
+          "AllowedMethods": {
+            "Quantity": 2,
+            "Items": ["GET", "HEAD"],
+            "CachedMethods": {
+              "Quantity": 2,
+              "Items": ["GET", "HEAD"]
+            }
+          },
+          "Compress": true,
+          "DefaultTTL": 604800,
+          "MinTTL": 0,
+          "MaxTTL": 31536000,
+          "ForwardedValues": {
+            "QueryString": false,
+            "Cookies": {
+              "Forward": "none"
+            }
+          }
+        }
+      ]
+    },
+    "CustomErrorResponses": {
+      "Quantity": 1,
+      "Items": [
+        {
+          "ErrorCode": 404,
+          "ResponsePagePath": "/index.html",
+          "ResponseCode": "200",
+          "ErrorCachingMinTTL": 10
+        }
+      ]
+    },
+    "Enabled": true,
+    "ViewerCertificate": {
+      "CloudFrontDefaultCertificate": true
+    }
+  }

@@ -1,0 +1,35 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity E5OEVYK1FLF68"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::cinedb-bucket-2025/*"
+    },
+    {
+      "Sid": "AllowAppWrite",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::472443946497:role/EC2SSMRole"
+      },
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject"
+      ],
+      "Resource": "arn:aws:s3:::cinedb-bucket-2025/*"
+    },
+    {
+      "Sid": "AllowLambdaAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::472443946497:role/lambda-dynamodb-s3-role"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::cinedb-bucket-2025/*"
+    }
+  ]
+} 

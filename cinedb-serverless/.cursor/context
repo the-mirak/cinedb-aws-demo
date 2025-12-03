@@ -1,0 +1,115 @@
+# CineDB Serverless Project Context
+
+## Project Overview
+This is a **serverless movie database application** that refactors an existing Flask-based CineDB application into a modern AWS serverless architecture. The project serves as a training progression through AWS services including S3, DynamoDB, Lambda, API Gateway, Cognito, and SAM.
+
+## Technology Stack
+- **Backend**: AWS Lambda (Python 3.9+), DynamoDB, S3
+- **API**: API Gateway REST API with AWS_PROXY integration
+- **Frontend**: Static HTML/CSS/JavaScript with Tailwind CSS
+- **Authentication**: AWS Cognito (planned)
+- **Infrastructure**: AWS SAM (Serverless Application Model)
+- **Development**: Docker, Node.js mock API server
+- **Storage**: S3 for static website hosting and movie poster images
+
+## Architecture
+- **Serverless**: Event-driven, fully managed AWS services
+- **Microservices**: Each Lambda function handles a specific operation
+- **Static Frontend**: Hosted on S3 with CloudFront distribution
+- **API-First**: RESTful API design with proper CORS support
+- **Secure**: Presigned URLs for S3 access, IAM least-privilege
+
+## Current Implementation Status
+
+### ✅ Completed Components
+- **Lambda Functions**: 6 functions for CRUD operations and presigned URL generation
+- **API Gateway**: Fully deployed REST API with all endpoints functional
+- **Frontend**: Static HTML pages converted from Flask templates
+- **S3 Configuration**: Poster storage bucket with CORS and policies
+- **DynamoDB**: Movie data storage with proper schema
+- **Development Environment**: Mock API server and Docker setup
+
+### 🚧 In Progress / Missing
+- **SAM Templates**: Infrastructure as Code for reproducible deployments
+- **Cognito Authentication**: User pool and authorizers for admin operations
+- **CloudFront**: CDN setup for frontend distribution
+- **Monitoring**: CloudWatch dashboards and alarms
+
+## File Structure
+```
+cinedb-serverless/
+├── backend/
+│   └── lambda_functions/          # Lambda function implementations
+│       ├── get_all_movies/        # List all movies with presigned URLs
+│       ├── get_movie_by_id/       # Get specific movie details
+│       ├── add_movie/             # Create new movie with poster upload
+│       ├── update_movie/          # Update existing movie
+│       ├── delete_movie/          # Remove movie and poster
+│       └── generate_presigned_url/ # Generate S3 presigned URLs
+├── frontend/                      # Static website files
+│   ├── *.html                     # Main application pages
+│   ├── static/                    # CSS, JS, and assets
+│   └── templates/                 # Template files for reference
+├── docs/
+│   └── api-gateway/               # API Gateway setup documentation
+├── mock-api/                      # Local development mock server
+├── s3-poster-storage/             # S3 configuration files
+├── sam/                           # SAM templates (to be created)
+└── .cursor/                       # Cursor IDE configuration
+```
+
+## API Endpoints
+- **GET /movies** - List all movies with presigned poster URLs
+- **POST /movies** - Add new movie with poster upload
+- **GET /movies/{id}** - Get specific movie by ID
+- **PUT /movies/{id}** - Update existing movie
+- **DELETE /movies/{id}** - Delete movie and associated poster
+- **GET /presigned/{key}** - Generate presigned URL for S3 object
+
+## Environment Configuration
+- **DYNAMODB_TABLE**: Movie data table name (default: 'cinedb')
+- **S3_BUCKET**: Poster storage bucket (default: 'cinedb-bucket-2025')
+- **AWS_REGION**: AWS region (default: 'us-east-1')
+
+## Development Workflow
+1. **Local Development**: Use mock API server for frontend testing
+2. **Lambda Testing**: Direct function invocation or API Gateway testing
+3. **Frontend Development**: Static files with Tailwind CSS compilation
+4. **Deployment**: Manual AWS CLI or SAM deployment (when templates ready)
+
+## Key Features
+- **Movie Catalog**: Browse movies with poster images
+- **Admin Operations**: CRUD operations for movie management
+- **File Upload**: Poster image upload to S3 with validation
+- **Secure Access**: Presigned URLs for temporary S3 access
+- **Responsive Design**: Mobile-friendly interface with Tailwind CSS
+- **Error Handling**: Comprehensive error responses and logging
+
+## Security Considerations
+- **IAM Roles**: Least-privilege access for Lambda functions
+- **CORS**: Proper cross-origin resource sharing configuration
+- **Input Validation**: Server-side validation for all inputs
+- **File Upload Security**: Type validation and size limits
+- **Authentication**: Cognito integration for admin operations (planned)
+
+## Performance Optimizations
+- **Lambda**: Optimized memory allocation and cold start handling
+- **DynamoDB**: Efficient query patterns and pagination
+- **S3**: Presigned URLs to reduce Lambda processing
+- **Frontend**: Minified assets and efficient API calls
+- **Caching**: CloudFront for static content delivery (planned)
+
+## Training Module Progression
+1. **S3 Module**: Static hosting and poster storage
+2. **DynamoDB Module**: Data storage and migration
+3. **Lambda Module**: Serverless compute functions
+4. **API Gateway Module**: REST API and integrations
+5. **Cognito Module**: Authentication and authorization
+6. **SAM Module**: Infrastructure as Code deployment
+
+## Next Steps
+1. Create SAM templates for Infrastructure as Code
+2. Implement Cognito authentication for admin operations
+3. Set up CloudFront distribution for frontend
+4. Add monitoring and logging with CloudWatch
+5. Implement automated testing and CI/CD pipeline 

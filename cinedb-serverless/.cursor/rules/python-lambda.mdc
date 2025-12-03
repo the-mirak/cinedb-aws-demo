@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Python coding standards for Lambda functions
+globs: ["backend/**/*.py"]
+alwaysApply: true
+---
+
+# Python Lambda Standards
+
+## Code Style
+- Follow PEP 8 style guidelines
+- Use type hints for function parameters and return values
+- Use descriptive variable and function names
+- Keep functions under 50 lines when possible
+- Use docstrings for complex functions
+
+## Lambda Handler Structure
+```python
+def lambda_handler(event: dict, context: LambdaContext) -> dict:
+    """
+    Lambda handler function with proper typing
+    """
+    try:
+        # Main logic here
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps(response_data)
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({'error': str(e)})
+        }
+```
+
+## Error Handling
+- Use specific exception types (ClientError, ValidationError)
+- Log errors with sufficient context for debugging
+- Return structured error responses
+- Handle AWS service errors gracefully
+- Implement retry logic for transient failures
+
+## Environment Variables
+- Use os.environ.get() with default values
+- Document all required environment variables
+- Never hardcode AWS resource names
+- Use consistent naming conventions (UPPER_SNAKE_CASE)
+
+## AWS SDK Usage
+- Use boto3 resource and client patterns appropriately
+- Initialize clients outside the handler for reuse
+- Use modular imports to reduce bundle size
+- Handle pagination properly for DynamoDB scan operations

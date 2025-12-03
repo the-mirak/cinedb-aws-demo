@@ -1,0 +1,14 @@
+{
+  "name": "cinedb-frontend",
+  "version": "1.0.0",
+  "description": "CineDB Frontend with Tailwind CSS",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/styles.css -o ./static/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i ./src/styles.css -o ./static/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.5",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31"
+  }
+} 

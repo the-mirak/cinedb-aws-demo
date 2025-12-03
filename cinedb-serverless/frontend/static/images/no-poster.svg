@@ -1,0 +1,30 @@
+<svg width="600" height="900" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="900" fill="#1f2937" />
+  <text x="300" y="450" font-family="Arial" font-size="40" fill="white" text-anchor="middle">No Poster</text>
+  <text x="300" y="500" font-family="Arial" font-size="40" fill="white" text-anchor="middle">Available</text>
+  
+  <!-- Film strip design -->
+  <rect x="100" y="150" width="400" height="600" fill="none" stroke="#d1d5db" stroke-width="2" />
+  <rect x="135" y="190" width="330" height="520" fill="none" stroke="#d1d5db" stroke-width="2" />
+  
+  <!-- Film perforations -->
+  <circle cx="120" cy="190" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="120" cy="290" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="120" cy="390" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="120" cy="490" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="120" cy="590" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="120" cy="690" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  
+  <circle cx="480" cy="190" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="480" cy="290" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="480" cy="390" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="480" cy="490" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="480" cy="590" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  <circle cx="480" cy="690" r="10" fill="#374151" stroke="#d1d5db" stroke-width="2" />
+  
+  <!-- Camera icon -->
+  <path d="M300,350 L340,350 L350,370 L380,370 L380,450 L220,450 L220,370 L250,370 L260,350 Z" fill="#6b7280" />
+  <circle cx="300" cy="410" r="30" fill="#4b5563" stroke="#9ca3af" stroke-width="2" />
+  <circle cx="300" cy="410" r="15" fill="#374151" />
+  <rect x="365" y="380" width="10" height="10" fill="#9ca3af" />
+</svg> 

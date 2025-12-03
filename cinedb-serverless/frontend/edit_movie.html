@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Movie - CineDB</title>
+    <link rel="stylesheet" href="static/css/tailwind.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .form-field {
+            transition: all 0.2s ease-in-out;
+        }
+        .form-field:focus-within {
+            transform: translateY(-1px);
+        }
+        
+        /* Disabled States */
+        .disabled-section {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+        .disabled-section .file-upload-area {
+            background-color: #404040 !important;
+            border-color: #525252 !important;
+            cursor: not-allowed !important;
+        }
+        .disabled-section .url-input {
+            background-color: #404040 !important;
+            border-color: #525252 !important;
+            color: #737373 !important;
+            cursor: not-allowed !important;
+        }
+        .disabled-section .random-poster-btn {
+            background-color: #404040 !important;
+            color: #737373 !important;
+            cursor: not-allowed !important;
+        }
+        
+        /* Smooth section transitions */
+        .section-hidden {
+            display: none !important;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        .section-visible {
+            display: block !important;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Segmented Toggle Styles */
+        .toggle-slider {
+            transform: translateX(0);
+        }
+        
+        .toggle-slider.url-active {
+            transform: translateX(100%);
+        }
+        
+        .toggle-option {
+            color: #9ca3af; /* text-neutral-400 */
+        }
+        
+        .toggle-option.active {
+            color: #ffffff; /* text-white */
+        }
+        
+        .toggle-option.active svg {
+            color: #ffffff;
+        }
+        
+        .toggle-option:not(.active) svg {
+            color: #9ca3af;
+        }
+        
+        .toggle-option:hover:not(.active) {
+            color: #d1d5db; /* text-neutral-300 */
+        }
+        
+        .toggle-option:hover:not(.active) svg {
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 min-h-screen text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header class="bg-neutral-800 shadow-lg rounded-lg mb-8">
+            <div class="px-6 py-5 flex justify-between items-center">
+                <a href="index.html" class="text-3xl font-bold text-amber-400 hover:text-amber-300 transition-colors">CineDB</a>
+                <nav class="flex space-x-4">
+                    <a href="index.html" class="px-4 py-2 rounded-md text-sm font-medium text-neutral-400 hover:text-white transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-9 9a1 1 0 001.414 1.414L2 12.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-4.586l.293.293a1 1 0 001.414-1.414l-9-9z" />
+                        </svg>
+                        Home
+                    </a>
+                    <a href="admin.html" class="px-4 py-2 rounded-md text-sm font-medium bg-amber-600 text-white hover:bg-amber-700 transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+                        </svg>
+                        Admin Panel
+                    </a>
+                </nav>
+            </div>
+        </header>
+        
+        <main class="animate-fade-in">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="p-2 bg-amber-600 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl font-bold text-white">Edit Movie</h1>
+                </div>
+                <p class="text-neutral-400">Update movie information in the CineDB collection</p>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="max-w-4xl mx-auto">
+                <div class="bg-neutral-800 rounded-lg shadow-xl overflow-hidden">
+                    <div class="p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-amber-600 rounded-full mb-4">
+                            <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-white mb-2">Loading Movie Data</h3>
+                        <p class="text-neutral-400">Please wait while we fetch the movie information...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Container -->
+            <div id="form-container" class="max-w-4xl mx-auto" style="display: none;">
+                <div class="bg-neutral-800 rounded-lg shadow-xl overflow-hidden">
+                    <div class="p-8">
+                        <form id="edit-movie-form" class="space-y-6">
+                            <input type="hidden" id="movie-id">
+                            
+                            <!-- Basic Information Section -->
+                            <div class="border-b border-neutral-700 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Basic Information
+                                </h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Title -->
+                                    <div class="form-field">
+                                        <label for="title" class="block text-sm font-medium text-neutral-300 mb-2">
+                                            Movie Title <span class="text-red-400">*</span>
+                                        </label>
+                                        <input type="text" id="title" name="title" required 
+                                               class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                               placeholder="Enter movie title">
+                                    </div>
+                                    
+                                    <!-- Year -->
+                                    <div class="form-field">
+                                        <label for="year" class="block text-sm font-medium text-neutral-300 mb-2">
+                                            Release Year <span class="text-red-400">*</span>
+                                        </label>
+                                        <input type="number" id="year" name="year" min="1900" max="2099" required 
+                                               class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                               placeholder="2024">
+                                    </div>
+                                    
+                                    <!-- Rating -->
+                                    <div class="form-field">
+                                        <label for="rating" class="block text-sm font-medium text-neutral-300 mb-2">
+                                            IMDB Rating
+                                        </label>
+                                        <input type="number" id="rating" name="rating" min="0" max="10" step="0.1"
+                                               class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                               placeholder="e.g., 8.5">
+                                        <p class="text-sm text-neutral-400 mt-1">Enter a rating between 0 and 10 (decimals allowed)</p>
+                                    </div>
+                                    
+                                    <!-- Duration -->
+                                    <div class="form-field">
+                                        <label for="duration" class="block text-sm font-medium text-neutral-300 mb-2">
+                                            Duration (minutes)
+                                        </label>
+                                        <input type="number" id="duration" name="duration" min="1" max="999" 
+                                               class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                               placeholder="120">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Current Poster Section -->
+                            <div class="border-b border-neutral-700 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    Current Poster
+                                </h3>
+                                
+                                <div class="flex justify-center">
+                                    <img id="current-poster" src="" alt="Current movie poster" 
+                                         class="max-h-80 rounded-lg shadow-lg border border-neutral-600">
+                                </div>
+                            </div>
+
+                            <!-- Poster Update Section -->
+                            <div class="border-b border-neutral-700 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Update Poster Image
+                                </h3>
+                                
+                                <!-- Poster Input Method Toggle -->
+                                <div class="mb-6">
+                                    <div class="flex items-center justify-center p-6 bg-gradient-to-r from-neutral-800 to-neutral-700 rounded-xl border border-neutral-600">
+                                        <div class="relative bg-neutral-700 rounded-xl p-1 border border-neutral-600 shadow-inner">
+                                            <!-- Toggle Options Container -->
+                                            <div class="relative flex">
+                                                <!-- Sliding Background -->
+                                                <div class="absolute top-1 left-1 w-1/2 h-10 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg shadow-lg transition-transform duration-300 ease-in-out toggle-slider"></div>
+                                                
+                                                <!-- Upload File Option -->
+                                                <button type="button" class="relative z-10 flex items-center space-x-2 px-6 py-2.5 w-48 rounded-lg transition-colors duration-300 toggle-option active" id="upload-option">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                    </svg>
+                                                    <span class="font-semibold text-sm transition-colors duration-300">Upload File</span>
+                                                </button>
+                                                
+                                                <!-- Use URL Option -->
+                                                <button type="button" class="relative z-10 flex items-center space-x-2 px-6 py-2.5 w-48 rounded-lg transition-colors duration-300 toggle-option" id="url-option">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                                    </svg>
+                                                    <span class="font-semibold text-sm transition-colors duration-300">Use URL</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-xs text-neutral-500 text-center mt-3 font-medium">Choose your preferred method to update the poster</p>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <!-- File Upload Section -->
+                                    <div id="file-upload-section" class="transition-all duration-300 ease-in-out">
+                                        <div class="form-field">
+                                            <label for="poster" class="block text-sm font-medium text-neutral-300 mb-2">
+                                                Upload New Poster Image
+                                            </label>
+                                            <div class="relative">
+                                                <div class="flex items-center justify-center w-full">
+                                                    <label for="poster" class="flex flex-col items-center justify-center w-full h-40 border-2 border-neutral-600 border-dashed rounded-lg cursor-pointer bg-neutral-700 hover:bg-neutral-600 transition-colors file-upload-area">
+                                                        <div class="flex flex-col items-center justify-center py-8">
+                                                            <svg class="w-10 h-10 mb-4 text-neutral-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                                            </svg>
+                                                            <p class="text-sm text-neutral-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                                        </div>
+                                                        <input id="poster" name="poster" type="file" accept="image/*" class="hidden" />
+                                                    </label>
+                                                </div>
+                                                <p class="text-sm text-neutral-400 mt-2">Upload a new poster image (JPG, PNG, JPEG - MAX. 10MB)</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- URL Input Section -->
+                                    <div id="url-input-section" class="transition-all duration-300 ease-in-out" style="display: none;">
+                                        <div class="form-field">
+                                            <label for="poster_url" class="block text-sm font-medium text-neutral-300 mb-2">
+                                                New Poster URL
+                                            </label>
+                                            <input type="url" id="poster_url" name="poster_url" 
+                                                   class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors url-input"
+                                                   placeholder="https://example.com/poster.jpg">
+                                            <p class="text-sm text-neutral-400 mt-2">Provide a direct URL to a poster image</p>
+                                        </div>
+                                        
+                                        <!-- Random Poster Button -->
+                                        <div class="form-field mt-4">
+                                            <button type="button" id="generate-random-poster" 
+                                                    class="px-4 py-2 bg-neutral-600 text-white rounded-md hover:bg-neutral-500 transition-colors flex items-center random-poster-btn">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                                </svg>
+                                                Generate Random Poster
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Production Details Section -->
+                            <div class="border-b border-neutral-700 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+                                    </svg>
+                                    Production Details
+                                </h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Director -->
+                                    <div class="form-field">
+                                        <label for="director" class="block text-sm font-medium text-neutral-300 mb-2">
+                                            Director
+                                        </label>
+                                        <input type="text" id="director" name="director" 
+                                               class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                               placeholder="e.g., Christopher Nolan">
+                                    </div>
+                                    
+                                    <!-- Genre -->
+                                    <div class="form-field">
+                                        <label for="genre" class="block text-sm font-medium text-neutral-300 mb-2">
+                                            Genre
+                                        </label>
+                                        <input type="text" id="genre" name="genre" 
+                                               class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                               placeholder="e.g., Action, Drama, Sci-Fi">
+                                        <p class="text-sm text-neutral-400 mt-1">Separate multiple genres with commas</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Cast -->
+                                <div class="form-field mt-6">
+                                    <label for="cast" class="block text-sm font-medium text-neutral-300 mb-2">
+                                        Cast
+                                    </label>
+                                    <input type="text" id="cast" name="cast" 
+                                           class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+                                           placeholder="e.g., Leonardo DiCaprio, Tom Hardy, Marion Cotillard">
+                                    <p class="text-sm text-neutral-400 mt-1">Separate cast members with commas</p>
+                                </div>
+                            </div>
+
+                            <!-- Additional Information Section -->
+                            <div>
+                                <h3 class="text-lg font-medium text-white mb-4 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                    Synopsis
+                                </h3>
+                                
+                                <!-- Synopsis -->
+                                <div class="form-field">
+                                    <label for="synopsis" class="block text-sm font-medium text-neutral-300 mb-2">
+                                        Movie Synopsis
+                                    </label>
+                                    <textarea id="synopsis" name="synopsis" rows="4" 
+                                              class="w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-3 px-4 text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors resize-none"
+                                              placeholder="Enter a brief synopsis of the movie..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-4 pt-8 border-t border-neutral-700 justify-end">
+                                <button type="button" onclick="window.location.href='admin.html'" 
+                                        class="px-6 py-3 min-w-[120px] border border-neutral-600 rounded-md text-sm font-medium text-neutral-300 bg-neutral-700 hover:bg-neutral-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-colors flex items-center justify-center">
+                                    Cancel
+                                </button>
+                                <button type="submit" id="submit-button" 
+                                        class="px-6 py-3 min-w-[120px] border border-transparent rounded-md text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-colors flex items-center justify-center">
+                                    Update Movie
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="error-container" class="max-w-4xl mx-auto" style="display: none;">
+                <div class="bg-neutral-800 rounded-lg shadow-xl overflow-hidden">
+                    <div class="p-8 text-center">
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-red-600 rounded-full mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-white mb-2">Error Loading Movie</h3>
+                        <p id="error-message" class="text-neutral-400 mb-6">Failed to load movie data</p>
+                        <button onclick="window.location.href='admin.html'" 
+                                class="px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors">
+                            Back to Admin Panel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-12 py-6 border-t border-neutral-700">
+            <p class="text-center text-neutral-400">&copy; 2023 CineDB</p>
+        </footer>
+    </div>
+
+    <!-- Success/Error Modal -->
+    <div id="notification-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-neutral-800 rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <div id="notification-icon" class="flex-shrink-0 mr-3"></div>
+                    <h3 id="notification-title" class="text-lg font-medium text-white"></h3>
+                </div>
+                <p id="notification-message" class="text-neutral-300 mb-6"></p>
+                <div class="flex justify-end">
+                    <button id="notification-close" class="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition-colors">
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include scripts -->
+    <script src="static/js/api-client.js?v=1682284330"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
+    <script src="static/js/cognito-config.js"></script>
+    <script src="static/js/auth.js?v=1762631991"></script>
+    <script src="static/js/poster-generator.js"></script>
+    <script>
+        // Protect admin page
+        if (typeof protectAdminPage === 'function') {
+            protectAdminPage();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('id');
+            
+            if (!movieId) {
+                showError('No movie ID provided');
+                return;
+            }
+            
+            document.getElementById('movie-id').value = movieId;
+            
+            // Show notification modal
+            function showNotification(type, title, message, callback) {
+                const modal = document.getElementById('notification-modal');
+                const icon = document.getElementById('notification-icon');
+                const titleEl = document.getElementById('notification-title');
+                const messageEl = document.getElementById('notification-message');
+                const closeBtn = document.getElementById('notification-close');
+                
+                // Set icon based on type
+                if (type === 'success') {
+                    icon.innerHTML = `
+                        <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                    `;
+                } else {
+                    icon.innerHTML = `
+                        <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </div>
+                    `;
+                }
+                
+                titleEl.textContent = title;
+                messageEl.textContent = message;
+                modal.classList.remove('hidden');
+                
+                closeBtn.onclick = function() {
+                    modal.classList.add('hidden');
+                    if (callback) callback();
+                };
+            }
+            
+            // Helper function to show error state
+            function showError(message) {
+                document.getElementById('loading-spinner').style.display = 'none';
+                document.getElementById('form-container').style.display = 'none';
+                document.getElementById('error-message').textContent = message;
+                document.getElementById('error-container').style.display = 'block';
+            }
+            
+            // Load movie data
+            getMovie(movieId)
+                .then(movie => {
+                    if (!movie) {
+                        showError('Movie not found');
+                        return;
+                    }
+                    
+                    // Populate form fields
+                    document.getElementById('title').value = movie.title || '';
+                    document.getElementById('year').value = movie.year || '';
+                    document.getElementById('rating').value = movie.rating || '';
+                    document.getElementById('duration').value = movie.duration || '';
+                    document.getElementById('director').value = movie.director || '';
+                    document.getElementById('genre').value = movie.genre || '';
+                    document.getElementById('cast').value = movie.cast || '';
+                    document.getElementById('synopsis').value = movie.synopsis || '';
+                    
+                    // Display current poster
+                    const currentPoster = document.getElementById('current-poster');
+                    if (movie.poster) {
+                        currentPoster.src = movie.poster;
+                        // Set the poster URL in the URL input but don't enable it yet
+                        // The toggle will control which method is active
+                        document.getElementById('poster_url').value = movie.poster;
+                    } else {
+                        currentPoster.src = 'static/images/no-poster.png';
+                    }
+                    
+                    // Hide loading spinner and show form
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    document.getElementById('form-container').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error loading movie:', error);
+                    showError('Failed to load movie data: ' + (error.message || 'Unknown error'));
+                });
+            
+            // Poster input method toggle functionality
+            const uploadOption = document.getElementById('upload-option');
+            const urlOption = document.getElementById('url-option');
+            const toggleSlider = document.querySelector('.toggle-slider');
+            const fileUploadSection = document.getElementById('file-upload-section');
+            const urlInputSection = document.getElementById('url-input-section');
+            const posterFileInput = document.getElementById('poster');
+            const posterUrlInput = document.getElementById('poster_url');
+            
+            let isUrlMode = false;
+            
+            function updateToggleState() {
+                if (isUrlMode) {
+                    // URL mode
+                    toggleSlider.classList.add('url-active');
+                    uploadOption.classList.remove('active');
+                    urlOption.classList.add('active');
+                    fileUploadSection.classList.add('disabled-section', 'section-hidden');
+                    urlInputSection.classList.remove('disabled-section', 'section-hidden');
+                    urlInputSection.classList.add('section-visible');
+                    // Clear file input when switching to URL mode
+                    posterFileInput.value = '';
+                    posterFileInput.disabled = true;
+                    posterUrlInput.disabled = false;
+                } else {
+                    // File upload mode
+                    toggleSlider.classList.remove('url-active');
+                    urlOption.classList.remove('active');
+                    uploadOption.classList.add('active');
+                    urlInputSection.classList.add('disabled-section', 'section-hidden');
+                    fileUploadSection.classList.remove('disabled-section', 'section-hidden');
+                    fileUploadSection.classList.add('section-visible');
+                    // Clear URL input when switching to file mode
+                    posterUrlInput.value = '';
+                    posterUrlInput.disabled = true;
+                    posterFileInput.disabled = false;
+                }
+            }
+            
+            // Initialize toggle state (default to file upload)
+            isUrlMode = false;
+            updateToggleState();
+            
+            // Handle toggle clicks
+            uploadOption.addEventListener('click', function() {
+                if (isUrlMode) {
+                    isUrlMode = false;
+                    updateToggleState();
+                }
+            });
+            
+            urlOption.addEventListener('click', function() {
+                if (!isUrlMode) {
+                    isUrlMode = true;
+                    updateToggleState();
+                }
+            });
+            
+            // Form submission handler
+            document.getElementById('edit-movie-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Disable submit button to prevent multiple submissions
+                const submitButton = document.getElementById('submit-button');
+                const originalText = submitButton.innerHTML;
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <svg class="animate-spin h-4 w-4 mr-2 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Updating Movie...
+                `;
+                
+                try {
+                    // Get form data
+                    const formData = {
+                        id: document.getElementById('movie-id').value,
+                        title: document.getElementById('title').value,
+                        year: parseInt(document.getElementById('year').value),
+                        rating: document.getElementById('rating').value || null,
+                        duration: document.getElementById('duration').value ? parseInt(document.getElementById('duration').value) : null,
+                        director: document.getElementById('director').value || null,
+                        genre: document.getElementById('genre').value || null,
+                        cast: document.getElementById('cast').value || null,
+                        poster_url: toggleSlider.classList.contains('url-active') ? document.getElementById('poster_url').value || null : null,
+                        synopsis: document.getElementById('synopsis').value || null
+                    };
+                    
+                    // Get the poster file only if file upload mode is active
+                    const posterFile = !toggleSlider.classList.contains('url-active') && posterFileInput.files.length > 0 ? posterFileInput.files[0] : null;
+                    
+                    // Call API to update movie
+                    const result = await updateMovie(formData, posterFile);
+                    
+                    // Show success message and redirect
+                    showNotification('success', 'Success!', 'Movie updated successfully!', function() {
+                        window.location.href = 'admin.html';
+                    });
+                } catch (error) {
+                    console.error('Error updating movie:', error);
+                    showNotification('error', 'Error', 'Failed to update movie: ' + (error.message || 'Unknown error'));
+                    
+                    // Re-enable submit button
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalText;
+                }
+            });
+            
+            // Generate random poster feature
+            document.getElementById('generate-random-poster').addEventListener('click', function() {
+                // Only generate if we're in URL mode
+                if (toggleSlider.classList.contains('url-active')) {
+                    const randomId = Math.floor(Math.random() * 1000);
+                    const posterUrl = `https://picsum.photos/300/450?random=${randomId}`;
+                    document.getElementById('poster_url').value = posterUrl;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

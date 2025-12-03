@@ -1,0 +1,7 @@
+{
+  "httpMethod": "POST",
+  "headers": {
+    "content-type": "application/json"
+  },
+  "body": "{\"title\":\"Test Movie\",\"synopsis\":\"This is a test\",\"rating\":\"8.5\"}"
+}

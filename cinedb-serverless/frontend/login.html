@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineDB - Login</title>
+    <link rel="stylesheet" href="static/css/tailwind.css">
+    <style>
+        /* Toggle switch styles */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #d97706;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #d97706;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 min-h-screen text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header class="bg-neutral-800 shadow-lg rounded-lg mb-8">
+            <div class="px-6 py-5 flex justify-between items-center">
+                <a href="index.html" class="text-3xl font-bold text-amber-400 hover:text-amber-300 transition-colors">CineDB</a>
+                <nav class="flex space-x-4">
+                    <!-- Home button removed -->
+                </nav>
+            </div>
+        </header>
+        
+        <main>
+            <div class="max-w-md mx-auto">
+                <div class="bg-neutral-800 rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-8">
+                        <h2 class="text-2xl font-bold text-center text-white mb-8">Admin Login</h2>
+                        
+                        <div id="error-message" class="bg-red-900/30 border border-red-900/50 text-red-200 p-4 rounded-md mb-6" style="display: none;"></div>
+                        
+                        <!-- Demo Mode Toggle -->
+                        <div class="mb-6 flex items-center justify-between bg-neutral-700/50 rounded-md p-4 border border-neutral-600">
+                            <div>
+                                <h3 class="font-medium text-white">Demo Mode</h3>
+                                <p class="text-sm text-neutral-400">Bypass authentication for demos</p>
+                            </div>
+                            <div class="relative inline-block w-12 mr-2 align-middle select-none">
+                                <input type="checkbox" id="demo-mode-toggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" />
+                                <label for="demo-mode-toggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-neutral-600 cursor-pointer"></label>
+                            </div>
+                        </div>
+                        
+                        <div id="login-container">
+                            <form id="login-form" class="space-y-6">
+                                <div>
+                                    <label for="username" class="block text-sm font-medium text-neutral-300">Username</label>
+                                    <input type="text" id="username" name="username" required class="mt-1 block w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                </div>
+                                
+                                <div>
+                                    <label for="password" class="block text-sm font-medium text-neutral-300">Password</label>
+                                    <input type="password" id="password" name="password" required class="mt-1 block w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                </div>
+                                
+                                <div>
+                                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                        </svg>
+                                        Login
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div id="demo-mode-active" class="hidden space-y-6">
+                            <div class="bg-amber-900/30 border border-amber-600/30 text-amber-200 p-4 rounded-md mb-4">
+                                <div class="flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span>Demo mode is active. Authentication is bypassed.</span>
+                                </div>
+                            </div>
+                            
+                            <button id="continue-to-admin" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                                Continue to Admin Panel
+                            </button>
+                        </div>
+                        
+                        <!-- Registration Form (hidden by default) -->
+                        <div id="register-container" class="hidden space-y-6">
+                            <form id="register-form" class="space-y-6">
+                                <div>
+                                    <label for="register-email" class="block text-sm font-medium text-neutral-300">Email</label>
+                                    <input type="email" id="register-email" name="email" required 
+                                           class="mt-1 block w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-2 px-3 text-white placeholder-neutral-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500"
+                                           placeholder="your.email@example.com">
+                                </div>
+                                
+                                <div>
+                                    <label for="register-password" class="block text-sm font-medium text-neutral-300">Password</label>
+                                    <input type="password" id="register-password" name="password" required 
+                                           class="mt-1 block w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-2 px-3 text-white placeholder-neutral-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                    <p class="text-xs text-neutral-400 mt-1">Min 8 chars, uppercase, lowercase, number, symbol</p>
+                                </div>
+                                
+                                <div>
+                                    <label for="register-confirm-password" class="block text-sm font-medium text-neutral-300">Confirm Password</label>
+                                    <input type="password" id="register-confirm-password" name="confirmPassword" required 
+                                           class="mt-1 block w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-2 px-3 text-white placeholder-neutral-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500">
+                                </div>
+                                
+                                <div id="register-error" class="hidden bg-red-900/30 border border-red-600/30 text-red-200 p-3 rounded-md text-sm"></div>
+                                
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                                    </svg>
+                                    Register
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Confirmation Form (hidden by default) -->
+                        <div id="confirm-container" class="hidden space-y-6">
+                            <div class="bg-amber-900/30 border border-amber-600/30 text-amber-200 p-4 rounded-md mb-4">
+                                <div class="flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                    </svg>
+                                    <div>
+                                        <p class="font-medium">Check your email</p>
+                                        <p class="text-sm mt-1">We've sent a verification code to your email address</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="confirm-form" class="space-y-6">
+                                <input type="hidden" id="confirm-username" />
+                                
+                                <div>
+                                    <label for="confirm-code" class="block text-sm font-medium text-neutral-300">Verification Code</label>
+                                    <input type="text" id="confirm-code" name="code" required 
+                                           class="mt-1 block w-full bg-neutral-700 border border-neutral-600 rounded-md shadow-sm py-2 px-3 text-white placeholder-neutral-400 focus:outline-none focus:ring-amber-500 focus:border-amber-500 text-center text-xl tracking-widest"
+                                           placeholder="000000"
+                                           maxlength="6">
+                                </div>
+                                
+                                <div id="confirm-error" class="hidden bg-red-900/30 border border-red-600/30 text-red-200 p-3 rounded-md text-sm"></div>
+                                
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Verify Email
+                                </button>
+                                
+                                <button type="button" id="resend-code" class="w-full text-sm text-amber-400 hover:text-amber-300">
+                                    Didn't receive the code? Resend
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <button id="toggle-register" class="text-sm text-amber-400 hover:text-amber-300 transition-colors">
+                                Don't have an account? Register
+                            </button>
+                        </div>
+                        
+                        <div class="mt-6 text-center text-sm text-neutral-400">
+                            <p>For demo purposes, use:</p>
+                            <p class="mt-1">Username: <span class="text-neutral-300 font-mono">admin</span> / Password: <span class="text-neutral-300 font-mono">password</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="mt-12 py-6 border-t border-neutral-700">
+            <p class="text-center text-neutral-400">&copy; 2023 CineDB</p>
+        </footer>
+    </div>
+
+    <!-- Include Auth script -->
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
+    <script src="static/js/cognito-config.js"></script>
+    <script src="static/js/auth.js?v=1762631991"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if redirect parameter exists
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect') || 'admin.html';
+            
+            // Get elements
+            const demoModeToggle = document.getElementById('demo-mode-toggle');
+            const loginContainer = document.getElementById('login-container');
+            const demoModeActive = document.getElementById('demo-mode-active');
+            const continueButton = document.getElementById('continue-to-admin');
+            
+            // Set initial demo mode toggle state
+            demoModeToggle.checked = isDemoMode();
+            updateUIForDemoMode();
+            
+            // Toggle demo mode when switch is clicked
+            demoModeToggle.addEventListener('change', function() {
+                setDemoMode(this.checked);
+                updateUIForDemoMode();
+            });
+            
+            // Update UI based on demo mode state
+            function updateUIForDemoMode() {
+                if (isDemoMode()) {
+                    loginContainer.classList.add('hidden');
+                    demoModeActive.classList.remove('hidden');
+                } else {
+                    loginContainer.classList.remove('hidden');
+                    demoModeActive.classList.add('hidden');
+                }
+            }
+            
+            // Handle "Continue to Admin Panel" button click
+            continueButton.addEventListener('click', function() {
+                // In demo mode, perform login first to clear any logout flags
+                // and ensure proper authentication state
+                if (isDemoMode()) {
+                    login('demo-user', '').then(() => {
+                        window.location.href = redirectUrl;
+                    }).catch(() => {
+                        // Should never happen in demo mode, but handle gracefully
+                        window.location.href = redirectUrl;
+                    });
+                } else {
+                    window.location.href = redirectUrl;
+                }
+            });
+            
+            // If already authenticated, redirect immediately
+            if (isAuthenticated() && !isDemoMode()) {
+                window.location.href = redirectUrl;
+                return;
+            }
+            
+            // Handle login form submission
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                login(username, password)
+                    .then(result => {
+                        window.location.href = redirectUrl;
+                    })
+                    .catch(error => {
+                        const errorMessage = document.getElementById('error-message');
+                        errorMessage.textContent = error.message;
+                        errorMessage.style.display = 'block';
+                    });
+            });
+            
+            // Toggle between login and registration forms
+            document.getElementById('toggle-register').addEventListener('click', function() {
+                const loginContainer = document.getElementById('login-container');
+                const registerContainer = document.getElementById('register-container');
+                const confirmContainer = document.getElementById('confirm-container');
+                const demoModeActive = document.getElementById('demo-mode-active');
+                const isLoginVisible = !loginContainer.classList.contains('hidden');
+                
+                if (isLoginVisible) {
+                    // Switch to registration
+                    loginContainer.classList.add('hidden');
+                    demoModeActive.classList.add('hidden');
+                    registerContainer.classList.remove('hidden');
+                    confirmContainer.classList.add('hidden');
+                    this.textContent = 'Already have an account? Login';
+                } else {
+                    // Switch back to login
+                    registerContainer.classList.add('hidden');
+                    confirmContainer.classList.add('hidden');
+                    loginContainer.classList.remove('hidden');
+                    if (isDemoMode()) {
+                        demoModeActive.classList.remove('hidden');
+                    }
+                    this.textContent = "Don't have an account? Register";
+                }
+            });
+            
+            // Handle registration form submission
+            document.getElementById('register-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                const errorDiv = document.getElementById('register-error');
+                
+                errorDiv.classList.add('hidden');
+                
+                register(email, password, confirmPassword)
+                    .then(result => {
+                        document.getElementById('register-container').classList.add('hidden');
+                        document.getElementById('confirm-container').classList.remove('hidden');
+                        document.getElementById('confirm-username').value = result.username;
+                        document.getElementById('toggle-register').classList.add('hidden');
+                    })
+                    .catch(error => {
+                        errorDiv.textContent = error.message || 'Registration failed. Please try again.';
+                        errorDiv.classList.remove('hidden');
+                    });
+            });
+            
+            // Handle email confirmation form submission
+            document.getElementById('confirm-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('confirm-username').value;
+                const code = document.getElementById('confirm-code').value;
+                const errorDiv = document.getElementById('confirm-error');
+                
+                errorDiv.classList.add('hidden');
+                
+                confirmRegistration(username, code)
+                    .then(result => {
+                        alert('Email verified successfully! You can now log in with your credentials.');
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        errorDiv.textContent = error.message || 'Verification failed. Please check your code and try again.';
+                        errorDiv.classList.remove('hidden');
+                    });
+            });
+            
+            // Handle resend confirmation code
+            document.getElementById('resend-code').addEventListener('click', function() {
+                const username = document.getElementById('confirm-username').value;
+                
+                resendConfirmationCode(username)
+                    .then(result => {
+                        alert('Verification code resent! Please check your email.');
+                    })
+                    .catch(error => {
+                        alert('Failed to resend code: ' + error.message);
+                    });
+            });
+        });
+    </script>
+</body>
+</html> 

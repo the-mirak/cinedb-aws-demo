@@ -1,0 +1,1 @@
+{"statusCode": 201, "headers": {"Content-Type": "application/json", "Access-Control-Allow-Origin": "*"}, "body": "{\"message\": \"Movie added successfully\", \"movie\": {\"id\": \"2829c888-ec22-43a3-ae68-d5c959875d79\", \"title\": \"Test Movie Title\", \"synopsis\": \"This is a test movie synopsis.\", \"rating\": \"8.5\", \"createdAt\": \"2025-04-21T14:48:24.026763\"}}"}

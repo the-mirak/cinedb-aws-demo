@@ -1,0 +1,69 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+---
+description: CineDB-specific development workflows and processes
+globs: ["**/*"]
+alwaysApply: false
+---
+
+# CineDB Development Workflow
+
+## Local Development Process
+1. Use mock API server for frontend testing (`npm run start` in mock-api/)
+2. Test Lambda functions individually before API Gateway integration
+3. Use Docker for consistent development environment
+4. Run Tailwind CSS compilation for frontend changes
+
+## Testing Strategy
+- Test Lambda functions with sample API Gateway events
+- Validate API endpoints using curl or Postman
+- Test file upload functionality with multipart/form-data
+- Verify CORS headers in browser developer tools
+- Test presigned URL generation and expiration
+
+## Deployment Workflow
+1. Test changes locally with mock API
+2. Deploy Lambda functions individually for testing
+3. Update API Gateway configuration if needed
+4. Deploy frontend to S3 and invalidate CloudFront cache
+5. Verify end-to-end functionality
+
+## Movie Management Features
+- **GET /movies**: List all movies with presigned poster URLs
+- **POST /movies**: Add new movie with poster upload validation
+- **GET /movies/{id}**: Get specific movie details
+- **PUT /movies/{id}**: Update movie with optional poster replacement
+- **DELETE /movies/{id}**: Remove movie and associated poster from S3
+- **GET /presigned/{key}**: Generate secure S3 access URLs
+
+## File Upload Handling
+- Validate file types (jpg, png, gif)
+- Check file size limits (max 10MB)
+- Generate unique filenames to prevent conflicts
+- Store original filename in metadata
+- Clean up orphaned files periodically
+
+## Error Response Format
+```json
+{
+  "error": "Descriptive error message",
+  "statusCode": 400,
+  "timestamp": "2024-01-01T00:00:00Z",
+  "requestId": "uuid-here"
+}
+```
+
+## Environment Configuration
+- **DYNAMODB_TABLE**: Movie data table (default: 'cinedb')
+- **S3_BUCKET**: Poster storage bucket (default: 'cinedb-bucket-2025')
+- **AWS_REGION**: AWS region (default: 'us-east-1')
+
+## Security Considerations
+- Validate all user inputs on server side
+- Use presigned URLs for temporary S3 access
+- Implement rate limiting for API endpoints
+- Sanitize file uploads and validate MIME types
+- Use HTTPS for all API communications

@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: CineDB Cognito Authentication Resources
+
+Resources:
+  CineDBUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: cinedb-user-pool
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Schema:
+        - Name: email
+          Required: true
+          Mutable: false
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+      AccountRecoverySetting:
+        RecoveryMechanisms:
+          - Name: verified_email
+            Priority: 1
+      EmailConfiguration:
+        EmailSendingAccount: COGNITO_DEFAULT
+      UserPoolAddOns:
+        AdvancedSecurityMode: AUDIT
+
+  CineDBUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: cinedb-web-client
+      UserPoolId: !Ref CineDBUserPool
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      PreventUserExistenceErrors: ENABLED
+      RefreshTokenValidity: 30
+      AccessTokenValidity: 60
+      IdTokenValidity: 60
+      TokenValidityUnits:
+        RefreshToken: days
+        AccessToken: minutes
+        IdToken: minutes
+
+  CognitoAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      Name: CineDBCognitoAuthorizer
+      Type: COGNITO_USER_POOLS
+      IdentitySource: method.request.header.Authorization
+      RestApiId: u8cf224qu3
+      ProviderARNs:
+        - !GetAtt CineDBUserPool.Arn
+
+Outputs:
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref CineDBUserPool
+    Export:
+      Name: CineDB-UserPoolId
+  
+  UserPoolClientId:
+    Description: Cognito User Pool Client ID
+    Value: !Ref CineDBUserPoolClient
+    Export:
+      Name: CineDB-UserPoolClientId
+  
+  CognitoAuthorizerId:
+    Description: API Gateway Cognito Authorizer ID
+    Value: !Ref CognitoAuthorizer
+    Export:
+      Name: CineDB-CognitoAuthorizerId
+  
+  UserPoolArn:
+    Description: Cognito User Pool ARN
+    Value: !GetAtt CineDBUserPool.Arn
+    Export:
+      Name: CineDB-UserPoolArn
+

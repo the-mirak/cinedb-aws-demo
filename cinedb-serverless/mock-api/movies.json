@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "Sample Movie 1",
+    "rating": "8.5",
+    "synopsis": "This is a sample movie for testing purposes.",
+    "poster": "/uploads/sample1.jpg",
+    "year": "2025",
+    "duration": "2h"
+  },
+  {
+    "id": "2",
+    "title": "Sample Movie 2",
+    "rating": "7.2",
+    "synopsis": "Another sample movie for testing the application.",
+    "poster": "/uploads/sample2.jpg",
+    "year": "2023",
+    "duration": "1h"
+  },
+  {
+    "id": "a5ad80da-3866-4c05-8c92-1cbb82864c1f",
+    "title": "Test movie",
+    "rating": "8",
+    "synopsis": "Epsum lorem",
+    "poster": null,
+    "director": "",
+    "year": "2022",
+    "duration": "1h30",
+    "genre": "",
+    "cast": ""
+  }
+]

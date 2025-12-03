@@ -1,0 +1,52 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: AWS Serverless best practices for Lambda, DynamoDB, S3, and API Gateway
+globs: ["backend/**/*.py", "sam/**/*.yaml", "sam/**/*.yml"]
+alwaysApply: false
+---
+
+# AWS Serverless Best Practices
+
+## Lambda Functions
+- Use Python 3.9+ runtime for all Lambda functions
+- Keep functions stateless and focused on single responsibilities
+- Use environment variables for configuration, never hardcode values
+- Implement proper error handling with specific exception types
+- Use boto3 resource and client patterns appropriately
+- Optimize memory allocation based on function requirements
+- Handle cold starts efficiently
+
+## DynamoDB Patterns
+- Use single-table design principles where applicable
+- Implement proper partition key design for even distribution
+- Use consistent attribute naming conventions (snake_case)
+- Handle pagination with LastEvaluatedKey for scan operations
+- Implement proper error handling for DynamoDB operations
+- Use batch operations for multiple items when possible
+
+## S3 Best Practices
+- Use presigned URLs for secure file access
+- Implement proper CORS configuration for cross-origin requests
+- Handle file uploads with proper validation and size limits
+- Use meaningful object keys with proper prefixes
+- Implement lifecycle policies for cost management
+- Validate file types and sanitize uploads
+
+## API Gateway Integration
+- Use AWS_PROXY integration for all Lambda functions
+- Return proper HTTP status codes (200, 400, 404, 500)
+- Include CORS headers in all responses
+- Handle multipart/form-data for file uploads
+- Implement consistent error response format
+- Use path parameters and query strings appropriately
+
+## Security Standards
+- Never expose AWS credentials in code
+- Use IAM roles with least-privilege permissions
+- Implement input validation for all user inputs
+- Use HTTPS for all API communications
+- Validate and sanitize all file uploads

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineDB - Movie Database</title>
+    <link rel="stylesheet" href="static/css/tailwind.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes smoothZoom {
+            from { 
+                opacity: 0.8; 
+                transform: scale(0.95) translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); 
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        .animate-smooth-zoom {
+            animation: smoothZoom 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .poster-hover-overlay {
+            background: linear-gradient(45deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+        }
+        .transition-smooth {
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .modal-backdrop-fade {
+            transition: opacity 0.3s ease-out, backdrop-filter 0.3s ease-out;
+        }
+    </style>
+</head>
+<body class="bg-neutral-900 min-h-screen text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <header class="bg-neutral-800 shadow-lg rounded-lg mb-8">
+            <div class="px-6 py-5 flex justify-between items-center">
+                <a href="index.html" class="text-3xl font-bold text-amber-400 hover:text-amber-300 transition-colors">CineDB</a>
+                <div class="flex-1 mx-8">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Search movies..." class="w-full rounded-full bg-neutral-700 border-none py-2 pl-4 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <button id="search-clear" class="absolute right-10 top-2.5 text-neutral-400 hover:text-white hidden">
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                        <svg class="absolute right-3 top-2.5 h-5 w-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <nav class="flex space-x-4">
+                    <a href="admin.html" id="admin-link" class="px-4 py-2 rounded-md text-sm font-medium bg-neutral-800 border border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-500 transition-colors flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
+                        </svg>
+                        Admin Panel
+                    </a>
+                </nav>
+            </div>
+        </header>
+        
+        <main>
+            <div class="mb-8 flex justify-between items-center">
+                <h2 class="text-2xl font-semibold text-white">Featured Movies</h2>
+                <div class="flex space-x-4">
+                    <select class="bg-neutral-800 text-white rounded-md border-0 py-1.5 px-3 focus:ring-2 focus:ring-amber-500">
+                        <option value="">Sort by Rating</option>
+                        <option value="date">Sort by Date</option>
+                        <option value="name">Sort by Name</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="movie-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Movies will be loaded dynamically here -->
+                <div class="loading flex justify-center items-center p-12 col-span-full">
+                    <svg class="animate-spin h-10 w-10 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="ml-3 text-lg text-neutral-400">Loading movies...</span>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Modal for Movie Details -->
+        <div id="movie-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+            <div class="bg-neutral-800 rounded-lg shadow-xl max-w-5xl w-full mx-4 overflow-hidden">
+                <div class="relative">
+                    <button id="close-modal" class="absolute top-4 right-4 text-white hover:text-amber-400 focus:outline-none bg-neutral-700 hover:bg-neutral-600 rounded-full p-2 transition-all transform hover:scale-110 z-10">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                    <div id="modal-content" class="p-0">
+                        <!-- Movie details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Poster Enlargement Modal -->
+        <div id="poster-modal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[70] hidden cursor-pointer">
+            <button id="close-poster-modal" class="absolute top-4 right-4 text-white hover:text-amber-400 focus:outline-none bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full p-3 transition-all transform hover:scale-110 z-[80]">
+                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <div id="poster-content" class="flex items-center justify-center w-full h-full p-4">
+                <!-- Poster image will be loaded here -->
+            </div>
+        </div>
+        
+        <footer class="mt-12 py-6 border-t border-neutral-700">
+            <p class="text-center text-neutral-400">&copy; 2023 CineDB</p>
+        </footer>
+    </div>
+
+    <!-- Include API and Auth scripts -->
+    <script src="static/js/api-client.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.3.12/dist/amazon-cognito-identity.min.js"></script>
+    <script src="static/js/cognito-config.js"></script>
+    <script src="static/js/auth.js?v=1762631991"></script>
+    <script src="static/js/poster-generator.js"></script>
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('movie-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalBtn = document.getElementById('close-modal');
+        
+        // Poster modal functionality
+        const posterModal = document.getElementById('poster-modal');
+        const posterContent = document.getElementById('poster-content');
+        const closePosterModalBtn = document.getElementById('close-poster-modal');
+        
+        // Function to validate and fix poster URLs
+        function getValidPosterUrl(movie) {
+            let posterUrl = movie.poster;
+            
+            // If no poster URL, use placeholder
+            if (!posterUrl || posterUrl.trim() === '') {
+                console.log('No poster URL found, using placeholder for:', movie.title);
+                return generatePosterPlaceholder(movie.title || 'Movie');
+            }
+            
+            // If poster URL is just whitespace or "undefined", use placeholder
+            if (posterUrl === 'undefined' || posterUrl.trim() === 'undefined') {
+                console.log('Invalid poster URL (undefined), using placeholder for:', movie.title);
+                return generatePosterPlaceholder(movie.title || 'Movie');
+            }
+            
+            console.log('Using poster URL:', posterUrl);
+            return posterUrl;
+        }
+        
+        // Function to enlarge poster
+        function enlargePoster(posterUrl, movieTitle, element) {
+            console.log('=== ENLARGE POSTER DEBUG ===');
+            console.log('Poster URL received:', posterUrl);
+            console.log('Movie Title:', movieTitle);
+            
+            // Prevent multiple clicks during animation
+            if (element.classList.contains('animating')) return;
+            element.classList.add('animating');
+            
+            // Hide the movie modal first
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.95)';
+            
+            // Calculate optimal size for the enlarged poster
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const maxWidth = Math.min(screenWidth * 0.85, 700);
+            const maxHeight = screenHeight * 0.85;
+            const posterAspectRatio = 2/3; // Standard movie poster ratio
+            
+            let displayWidth, displayHeight;
+            if (maxWidth / posterAspectRatio <= maxHeight) {
+                displayWidth = maxWidth;
+                displayHeight = maxWidth / posterAspectRatio;
+            } else {
+                displayHeight = maxHeight;
+                displayWidth = maxHeight * posterAspectRatio;
+            }
+            
+            // Set up the poster modal content with proper sizing
+            posterContent.innerHTML = `
+                <img src="${posterUrl}" alt="${movieTitle} poster" 
+                     class="rounded-2xl shadow-2xl object-contain animate-smooth-zoom" 
+                     style="width: ${displayWidth}px; height: ${displayHeight}px; max-width: 85vw; max-height: 85vh; pointer-events: none;" 
+                     onerror="console.log('Final poster failed to load:', '${posterUrl}'); this.src = generatePosterPlaceholder('${movieTitle.replace(/'/g, "\\'")}');"
+                     onload="console.log('Final poster loaded successfully:', '${posterUrl}');">
+            `;
+            
+            // Show the poster modal
+            posterModal.classList.remove('hidden');
+            posterModal.style.opacity = '1';
+            document.body.classList.add('overflow-hidden');
+            
+            // Remove animation lock
+            setTimeout(() => {
+                element.classList.remove('animating');
+            }, 500);
+        }
+        
+        // Function to close poster modal
+        function closePosterModal() {
+            // Smooth fade out
+            posterModal.style.opacity = '0';
+            
+            setTimeout(() => {
+                posterModal.classList.add('hidden');
+                posterModal.style.opacity = '';
+                
+                // Check if movie modal is still open
+                if (!modal.classList.contains('hidden')) {
+                    // Restore the movie modal with smooth transition
+                    modal.style.opacity = '1';
+                    modal.style.transform = 'scale(1)';
+                    modal.style.pointerEvents = 'auto';
+                    document.body.classList.add('overflow-hidden'); // Keep overflow hidden for movie modal
+                } else {
+                    // If movie modal is closed, ensure scrolling is enabled
+                    document.body.classList.remove('overflow-hidden');
+                    document.body.style.overflow = '';
+                }
+            }, 300);
+        }
+        
+        // Close poster modal when clicking the close button
+        closePosterModalBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering the modal click
+            closePosterModal();
+        });
+        
+        // Close poster modal when clicking anywhere on the overlay
+        posterModal.addEventListener('click', (e) => {
+            // Don't close if clicking the close button (already handled above)
+            if (e.target !== closePosterModalBtn && !closePosterModalBtn.contains(e.target)) {
+                closePosterModal();
+            }
+        });
+        
+        // Function to close the modal
+        function closeModal() {
+            modal.classList.add('hidden');
+            modal.style.opacity = '';
+            modal.style.transform = '';
+            modal.style.pointerEvents = '';
+            // Always ensure overflow is restored when closing the main modal
+            document.body.classList.remove('overflow-hidden');
+            document.body.style.overflow = ''; // Reset any inline styles
+        }
+        
+        // Close modal when clicking the close button
+        closeModalBtn.addEventListener('click', closeModal);
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+        
+        // Close modal when pressing ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // Close poster modal first if it's open
+                if (!posterModal.classList.contains('hidden')) {
+                    closePosterModal();
+                }
+                // Otherwise close the main movie modal
+                else if (!modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            }
+        });
+        
+        // Function to open modal with movie details
+        function openMovieModal(movieId) {
+            // Show loading spinner
+            modalContent.innerHTML = `
+                <div class="flex justify-center items-center p-16">
+                    <svg class="animate-spin h-10 w-10 text-amber-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            `;
+            
+            // Show modal
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+            
+            // Fetch movie details
+            getMovie(movieId)
+                .then(movie => {
+                    // Generate a poster if none exists
+                    const posterUrl = getValidPosterUrl(movie);
+                    console.log('Movie data:', movie);
+                    console.log('Poster URL:', posterUrl);
+                    
+                    modalContent.innerHTML = `
+                        <div class="relative">
+                            <div class="h-80 w-full bg-gradient-to-b from-neutral-700 to-neutral-900 overflow-hidden">
+                                <img src="${posterUrl}" alt="${movie.title}" class="object-cover w-full h-full opacity-40" 
+                                     onerror="console.log('Background poster failed to load:', '${posterUrl}'); this.src = generatePosterPlaceholder('${movie.title.replace(/'/g, "\\'")}');"
+                                     onload="console.log('Background poster loaded successfully:', '${posterUrl}');">
+                                <div class="absolute inset-0 bg-gradient-to-t from-neutral-800 via-neutral-800/70 to-transparent"></div>
+                            </div>
+                            
+                            <div class="absolute bottom-0 left-0 p-8 flex space-x-6">
+                                <div class="w-56 h-80 sm:w-64 sm:h-96 rounded-lg overflow-hidden shadow-xl cursor-pointer hover:shadow-2xl transition-all duration-300 group relative poster-enlarge-trigger" data-poster-url="${posterUrl}" data-movie-title="${movie.title}">
+                                    <img src="${posterUrl}" alt="${movie.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                         onerror="console.log('Poster failed to load:', '${posterUrl}'); this.src = generatePosterPlaceholder('${movie.title.replace(/'/g, "\\'")}');"
+                                         onload="console.log('Poster loaded successfully:', '${posterUrl}');">
+                                    <div class="absolute inset-0 transition-all duration-300 flex items-center justify-center" style="background-color: rgba(0, 0, 0, 0);" onmouseenter="this.style.backgroundColor='rgba(0, 0, 0, 0.2)'" onmouseleave="this.style.backgroundColor='rgba(0, 0, 0, 0)'">
+                                        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-60 rounded-full p-3 backdrop-blur-sm">
+                                            <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <div class="bg-black bg-opacity-60 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
+                                            Click to enlarge
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pt-40 sm:pt-56">
+                                    <h2 class="text-3xl font-bold text-white">${movie.title}</h2>
+                                    <div class="flex items-center mt-2 text-sm text-neutral-300">
+                                        <span>${movie.year || 'Unknown'}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>${movie.duration || 'Unknown'}</span>
+                                        <span class="mx-2">•</span>
+                                        <span>${movie.genre || 'Unknown'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-8 pt-36 sm:pt-48">
+                            <div class="flex items-center space-x-6 mb-6">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-amber-400 text-2xl font-bold">★ ${movie.rating}</span>
+                                    <span class="text-neutral-400">/10</span>
+                                </div>
+                                <a href="#" class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded font-medium inline-flex items-center transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                    </svg>
+                                    Rate this
+                                </a>
+                                <button class="bg-neutral-700 hover:bg-neutral-600 text-white px-4 py-2 rounded font-medium inline-flex items-center transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                                    </svg>
+                                    Add to Watchlist
+                                </button>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div class="lg:col-span-2">
+                                    <h3 class="font-medium text-xl mb-3">Overview</h3>
+                                    <p class="text-neutral-300">${movie.synopsis || 'No synopsis available.'}</p>
+                                    
+                                    <h3 class="font-medium text-xl mt-8 mb-3">Cast</h3>
+                                    <p class="text-neutral-300">${movie.cast || 'Cast information not available.'}</p>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium text-xl mb-4">Movie Info</h3>
+                                    <div class="space-y-3">
+                                        <div>
+                                            <span class="text-neutral-400">Director:</span>
+                                            <span class="text-neutral-200 ml-2">${movie.director || 'Unknown'}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-neutral-400">Release Year:</span>
+                                            <span class="text-neutral-200 ml-2">${movie.year || 'Unknown'}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-neutral-400">Duration:</span>
+                                            <span class="text-neutral-200 ml-2">${movie.duration || 'Unknown'}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-neutral-400">Genre:</span>
+                                            <span class="text-neutral-200 ml-2">${movie.genre || 'Unknown'}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add event listener for poster enlargement
+                    const posterTrigger = document.querySelector('.poster-enlarge-trigger');
+                    if (posterTrigger) {
+                        posterTrigger.addEventListener('click', function() {
+                            const posterUrl = this.getAttribute('data-poster-url');
+                            const movieTitle = this.getAttribute('data-movie-title');
+                            enlargePoster(posterUrl, movieTitle, this);
+                        });
+                    }
+                })
+                .catch(error => {
+                    modalContent.innerHTML = `
+                        <div class="p-8">
+                            <div class="bg-red-500/20 text-red-200 p-4 rounded-md">
+                                Error loading movie details: ${error.message}
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Check authentication status and update UI
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show/hide admin link based on authentication
+            const adminLink = document.getElementById('admin-link');
+            if (adminLink) {
+                // Check authentication status and update visibility
+                adminLink.style.display = isAuthenticated() ? 'flex' : 'none';
+                
+                // Also check whenever the page gets focus (in case login state changed)
+                window.addEventListener('focus', function() {
+                    adminLink.style.display = isAuthenticated() ? 'flex' : 'none';
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.getElementById('search-input');
+            const searchClear = document.getElementById('search-clear');
+            
+            // Show/hide clear button based on input content
+            searchInput.addEventListener('input', function() {
+                if (this.value.length > 0) {
+                    searchClear.classList.remove('hidden');
+                } else {
+                    searchClear.classList.add('hidden');
+                }
+            });
+            
+            // Clear search when X is clicked
+            searchClear.addEventListener('click', function() {
+                searchInput.value = '';
+                searchClear.classList.add('hidden');
+                searchInput.focus();
+                // Here you would also reset the search results
+                // filterMovies('');
+            });
+            
+            // Handle ESC key press
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    searchClear.classList.add('hidden');
+                    searchInput.blur(); // Remove focus from the input
+                    // Here you would also reset the search results
+                    // filterMovies('');
+                }
+            });
+            
+            // Fetch and display movies
+            fetchMovies()
+                .then(movies => {
+                    const container = document.getElementById('movie-list');
+                    
+                    if (!movies || movies.length === 0) {
+                        container.innerHTML = '<div class="no-movies col-span-full text-center py-12 text-neutral-400">No movies found</div>';
+                        return;
+                    }
+                    
+                    container.innerHTML = movies.map(movie => {
+                        // Generate a poster if none exists
+                        const posterUrl = getValidPosterUrl(movie);
+                        
+                        return `
+                            <div class="movie-card bg-neutral-800 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1" onclick="openMovieModal('${movie.id}')">
+                                <div class="relative aspect-[2/3] overflow-hidden">
+                                    <img src="${posterUrl}" alt="${movie.title} poster" class="w-full h-full object-cover" onerror="this.src = generatePosterPlaceholder('${movie.title.replace(/'/g, "\\'")}')">
+                                    <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black to-transparent">
+                                        <div class="inline-flex items-center px-2.5 py-0.5 rounded-md bg-amber-700 text-white text-sm font-medium">
+                                            <svg class="h-3.5 w-3.5 mr-1 text-amber-300" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.538-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                            ${movie.rating}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="font-medium text-lg text-white mb-1 line-clamp-1">${movie.title}</h3>
+                                    <p class="text-neutral-400 text-sm mb-2">${movie.year || 'Unknown'} • ${movie.duration ? movie.duration + ' min' : 'Unknown'}</p>
+                                    <p class="text-neutral-300 text-sm line-clamp-2">${movie.synopsis || 'No synopsis available.'}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('movie-list').innerHTML = 
+                        `<div class="col-span-full bg-red-900/20 border border-red-900/30 text-red-200 p-4 rounded-md">
+                            Error loading movies: ${error.message}
+                        </div>`;
+                });
+        });
+    </script>
+</body>
+</html> 

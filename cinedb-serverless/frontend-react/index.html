@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineDB - Discover Movies & TV Shows</title>
+    <meta name="description" content="Explore the world's most comprehensive movie and TV show database. Discover trending films, read reviews, and find your next favorite movie." />
+    <meta name="author" content="CineDB" />
+
+    <meta property="og:title" content="CineDB - Discover Movies & TV Shows" />
+    <meta property="og:description" content="Explore the world's most comprehensive movie and TV show database." />
+    <meta property="og:type" content="website" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@CineDB" />
+  
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+    
+    <!-- Polyfill for AWS Cognito SDK -->
+    <script>
+      window.global = window;
+      window.process = { env: { DEBUG: undefined } };
+      var exports = {};
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
